@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sonorização ao Vivo — Apostila Visual</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{--bg:#0d0f14;--bg2:#141720;--bg3:#1c2030;--bg4:#252a3a;--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);--text:#e8eaf0;--muted:#8891a8;--accent:#f5a623;--accent2:#e05c2f;--blue:#4a9eff;--teal:#2dd4bf;--purple:#a78bfa;--green:#4ade80;--red:#f87171;--pink:#f472b6;--font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;--font-mono:'JetBrains Mono',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.65;min-height:100vh}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(13,15,20,.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);display:flex;align-items:center;overflow-x:auto;scrollbar-width:none;padding:0 1rem}
+.nav::-webkit-scrollbar{display:none}
+.nav-brand{font-family:var(--font-head);font-weight:800;font-size:13px;color:var(--accent);letter-spacing:.05em;text-transform:uppercase;padding:.85rem 1rem .85rem 0;border-right:1px solid var(--border);margin-right:.5rem;white-space:nowrap;cursor:pointer;flex-shrink:0}
+.nav-btn{font-size:11.5px;color:var(--muted);padding:.85rem .65rem;white-space:nowrap;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer;font-family:var(--font-head);font-weight:600;letter-spacing:.03em;transition:all .2s;flex-shrink:0}
+.nav-btn:hover{color:var(--text)}
+.nav-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* PAGES */
+.page{display:none;padding-top:50px;min-height:100vh;animation:fadeIn .25s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.page-inner{max-width:1060px;margin:0 auto;padding:2.5rem 1.4rem 4rem}
+
+/* HERO */
+.hero{padding:3.5rem 1.4rem 2rem;text-align:center;background:linear-gradient(180deg,#151a28 0%,var(--bg) 100%);border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(245,166,35,.07) 0%,transparent 70%);pointer-events:none}
+.hero-tag{display:inline-block;font-family:var(--font-mono);font-size:11px;color:var(--accent);background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.25);border-radius:3px;padding:3px 10px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:1rem}
+.hero h1{font-family:var(--font-head);font-size:clamp(1.9rem,5vw,3.2rem);font-weight:800;line-height:1.1;margin-bottom:.5rem}
+.hero h1 span{color:var(--accent)}
+.hero p{color:var(--muted);max-width:520px;margin:0 auto 1.8rem;font-size:14px}
+.hero-stats{display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap}
+.hero-stat .n{font-family:var(--font-head);font-size:1.9rem;font-weight:800;color:var(--accent)}
+.hero-stat .l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-family:var(--font-head)}
+
+/* SECTION HEADER */
+.sec-head{display:flex;align-items:center;gap:.9rem;margin-bottom:1.8rem;padding-bottom:1rem;border-bottom:1px solid var(--border)}
+.sec-num{font-family:var(--font-mono);font-size:11px;color:var(--accent);background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.2);padding:3px 8px;border-radius:3px;flex-shrink:0}
+.sec-title{font-family:var(--font-head);font-size:1.4rem;font-weight:700}
+.sec-sub{color:var(--muted);font-size:12px;margin-top:1px}
+
+/* PAGE TITLE (for sub-pages) */
+.page-title-wrap{padding:2.5rem 1.4rem 0;max-width:1060px;margin:0 auto}
+.page-badge{display:inline-block;font-family:var(--font-mono);font-size:10px;padding:2px 8px;border-radius:3px;margin-bottom:.6rem}
+.page-h1{font-family:var(--font-head);font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;line-height:1.15;margin-bottom:.4rem}
+.page-desc{color:var(--muted);font-size:14px;max-width:640px;margin-bottom:2rem}
+.page-divider{height:1px;background:var(--border);margin-bottom:2rem}
+
+/* CARDS */
+.cards{display:grid;gap:.9rem}
+.c2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.c3{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.c4{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1.1rem 1.3rem}
+.card-l{border-left:3px solid var(--accent)}
+.card-lb{border-left:3px solid var(--blue)}
+.card-lt{border-left:3px solid var(--teal)}
+.card-lp{border-left:3px solid var(--purple)}
+.card-lg{border-left:3px solid var(--green)}
+.card-lr{border-left:3px solid var(--red)}
+.card-lk{border-left:3px solid var(--pink)}
+.card h4{font-family:var(--font-head);font-size:13px;font-weight:700;margin-bottom:.35rem}
+.card p,.card li{font-size:13px;color:var(--muted);line-height:1.6}
+.card ul{padding-left:1.1rem}
+.tag{font-family:var(--font-mono);font-size:10px;color:var(--accent);background:rgba(245,166,35,.1);padding:2px 6px;border-radius:2px;margin-bottom:.45rem;display:inline-block}
+
+/* TOPIC CARDS (dashboard) */
+.topic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.8rem;margin:1.5rem 0}
+.topic-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1.1rem 1.2rem;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.topic-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--tc,var(--accent));border-radius:3px 3px 0 0}
+.topic-card:hover{border-color:var(--tc,var(--accent));transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,.3)}
+.topic-card .tc-num{font-family:var(--font-mono);font-size:10px;color:var(--muted);margin-bottom:.4rem}
+.topic-card .tc-name{font-family:var(--font-head);font-size:13px;font-weight:700;margin-bottom:.3rem}
+.topic-card .tc-desc{font-size:12px;color:var(--muted);line-height:1.5}
+.topic-card .tc-arrow{position:absolute;bottom:.7rem;right:.8rem;font-size:12px;color:var(--tc,var(--accent));opacity:.6}
+
+/* CHARTS */
+.chart-box{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1.2rem}
+.chart-title{font-family:var(--font-head);font-size:13px;font-weight:700;margin-bottom:1rem}
+.chart-sub{font-size:11px;color:var(--muted);margin-top:.5rem}
+.h160{height:160px}.h200{height:200px}.h240{height:240px}.h260{height:260px}.h300{height:300px}
+
+/* CALLOUT */
+.callout{background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.2);border-radius:8px;padding:.9rem 1.1rem;margin:1rem 0;font-size:13px;display:flex;gap:.7rem;align-items:flex-start}
+.callout.info{background:rgba(74,158,255,.07);border-color:rgba(74,158,255,.2)}
+.callout.danger{background:rgba(248,113,113,.07);border-color:rgba(248,113,113,.2)}
+.callout.success{background:rgba(74,222,128,.07);border-color:rgba(74,222,128,.2)}
+.ci{font-size:1rem;flex-shrink:0;margin-top:.1rem}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;margin:1rem 0}
+.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:480px}
+.tbl th{background:var(--bg3);color:var(--accent);font-family:var(--font-head);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:.55rem .9rem;text-align:left;border-bottom:1px solid var(--border2)}
+.tbl td{padding:.5rem .9rem;border-bottom:1px solid var(--border);color:var(--muted);vertical-align:top}
+.tbl tr:hover td{background:var(--bg3);color:var(--text)}
+.tdh{color:var(--text);font-weight:500}
+
+/* BADGE */
+.badge{display:inline-block;font-family:var(--font-mono);font-size:10px;padding:2px 6px;border-radius:3px}
+.ba{background:rgba(245,166,35,.15);color:var(--accent)}
+.bb{background:rgba(74,158,255,.15);color:var(--blue)}
+.bt{background:rgba(45,212,191,.15);color:var(--teal)}
+.bp{background:rgba(167,139,250,.15);color:var(--purple)}
+.bg{background:rgba(74,222,128,.15);color:var(--green)}
+.br{background:rgba(248,113,113,.15);color:var(--red)}
+
+/* SIGNAL CHAIN */
+.sigchain{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin:1rem 0}
+.sig-box{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:.45rem .8rem;font-size:12px;font-family:var(--font-head);font-weight:600;text-align:center;flex:1;min-width:80px}
+.sig-arr{color:var(--accent);font-size:.9rem;flex-shrink:0}
+
+/* SUBSECTION */
+.sub{margin-bottom:1.6rem}
+.sub h3{font-family:var(--font-head);font-size:.95rem;font-weight:700;color:var(--accent);margin-bottom:.7rem;display:flex;align-items:center;gap:.5rem}
+.sub h3::before{content:'';display:block;width:3px;height:13px;background:var(--accent);border-radius:2px;flex-shrink:0}
+.sub p{font-size:13.5px;color:var(--muted);margin-bottom:.5rem;max-width:760px}
+
+/* SPECTRUM */
+.spectrum{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin:1rem 0}
+.spec-band{border-radius:6px;padding:.75rem .5rem;text-align:center;cursor:pointer;transition:transform .15s}
+.spec-band:hover{transform:translateY(-3px)}
+.spec-band .hz{font-family:var(--font-mono);font-size:9px;margin-bottom:3px}
+.spec-band .name{font-family:var(--font-head);font-size:11px;font-weight:700;margin-bottom:3px}
+.spec-band .desc{font-size:9px;line-height:1.4}
+
+/* EQ */
+.eq-board{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.4rem}
+.eq-display{background:var(--bg);border-radius:8px;border:1px solid var(--border);padding:.9rem;margin-bottom:1rem}
+.eq-canvas-wrap{position:relative;width:100%;height:180px}
+.eq-sliders{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin-bottom:.8rem}
+.eq-band{display:flex;flex-direction:column;align-items:center;gap:5px}
+.eq-slider-wrap{position:relative;width:28px;height:120px;display:flex;align-items:center;justify-content:center}
+.eq-band input[type=range]{position:absolute;width:120px;height:26px;transform:rotate(-90deg);transform-origin:center center;cursor:pointer;background:transparent;appearance:none;-webkit-appearance:none;outline:none;touch-action:none}
+.eq-band input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:rgba(255,255,255,.12)}
+.eq-band input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:var(--thumb-color,#f5a623);margin-top:-5.5px;cursor:pointer}
+.eq-band input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:rgba(255,255,255,.12)}
+.eq-band input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;border:none;background:var(--thumb-color,#f5a623);cursor:pointer}
+.eq-band .freq-label{font-family:var(--font-mono);font-size:9px;color:var(--muted);text-align:center;line-height:1.3}
+.eq-band .val-label{font-family:var(--font-mono);font-size:10px;color:var(--accent);text-align:center;min-width:28px}
+.eq-presets{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.9rem}
+.eq-pbtn{font-size:11px;font-family:var(--font-head);font-weight:600;padding:4px 11px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);color:var(--muted);cursor:pointer;transition:all .18s}
+.eq-pbtn:hover,.eq-pbtn.active{background:rgba(245,166,35,.15);border-color:var(--accent);color:var(--accent)}
+.eq-info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.7rem;margin-top:1rem}
+.eq-bi{background:var(--bg3);border-radius:7px;padding:.75rem .9rem;border-left:3px solid var(--teal)}
+.eq-bi h5{font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--teal);margin-bottom:.25rem}
+.eq-bi p{font-size:11px;color:var(--muted);line-height:1.5}
+
+/* POLAR */
+.polar-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.4rem}
+.polar-tabs{display:flex;gap:.4rem;margin-bottom:1rem;flex-wrap:wrap}
+.polar-btn{font-size:11px;font-family:var(--font-head);font-weight:600;padding:4px 11px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);color:var(--muted);cursor:pointer;transition:all .18s}
+.polar-btn.active{background:rgba(74,158,255,.15);border-color:var(--blue);color:var(--blue)}
+.polar-canvas-wrap{position:relative;width:100%;max-width:260px;aspect-ratio:1;margin:0 auto}
+
+/* CONNECTORS */
+.conn-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.8rem}
+.conn-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.9rem;text-align:center}
+.conn-icon{font-size:1.8rem;margin-bottom:.4rem}
+.conn-name{font-family:var(--font-head);font-size:12px;font-weight:700;margin-bottom:.25rem}
+.conn-desc{font-size:11px;color:var(--muted);line-height:1.4}
+.conn-p{font-size:10px;color:var(--green);margin-top:.25rem}
+.conn-c{font-size:10px;color:var(--red)}
+
+/* VIRTUES */
+.virtues{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:.8rem}
+.virtue{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.9rem 1rem;display:flex;gap:.7rem}
+.vnum{font-family:var(--font-head);font-size:1.4rem;font-weight:800;color:rgba(245,166,35,.3);line-height:1;flex-shrink:0}
+.virtue h5{font-family:var(--font-head);font-size:12px;font-weight:700;margin-bottom:.2rem}
+.virtue p{font-size:11px;color:var(--muted);line-height:1.5}
+
+/* MINDMAP SVG */
+.mm-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.mm-wrap svg{display:block;width:100%}
+.mm-wrap svg g, .mm-wrap svg rect, .mm-wrap svg text { pointer-events: all; cursor: pointer; }
+
+/* FOOTER */
+.footer{text-align:center;padding:1.5rem;border-top:1px solid var(--border);color:var(--muted);font-size:11px;font-family:var(--font-mono)}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+  .hero h1{font-size:1.7rem}
+  .spectrum{grid-template-columns:repeat(2,1fr)}
+  .eq-sliders{grid-template-columns:repeat(5,1fr)}
+  .sigchain{gap:.25rem}
+  .sig-box{font-size:10px;padding:.35rem .5rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════ NAV ═══════════════════════════════ -->
+<nav class="nav" id="mainNav">
+  <div class="nav-brand" onclick="goPage('home')">🎛 Sonorização</div>
+  <button class="nav-btn" onclick="goPage('home')">Início</button>
+  <button class="nav-btn" onclick="goPage('intro')">Introdução</button>
+  <button class="nav-btn" onclick="goPage('corrente')">7 Elos</button>
+  <button class="nav-btn" onclick="goPage('cabos')">Cabos</button>
+  <button class="nav-btn" onclick="goPage('conectores')">Conectores</button>
+  <button class="nav-btn" onclick="goPage('microfones')">Microfones</button>
+  <button class="nav-btn" onclick="goPage('processamento')">Processamento</button>
+  <button class="nav-btn" onclick="goPage('mesa')">Mesa de som</button>
+  <button class="nav-btn" onclick="goPage('teoria')">Teoria</button>
+  <button class="nav-btn" onclick="goPage('equalizador')">Equalizador</button>
+  <button class="nav-btn" onclick="goPage('dinamica')">Dinâmica</button>
+  <button class="nav-btn" onclick="goPage('amplificador')">Amplificador</button>
+  <button class="nav-btn" onclick="goPage('projecao')">Projeção</button>
+  <button class="nav-btn" onclick="goPage('acustica')">Acústica</button>
+  <button class="nav-btn" onclick="goPage('operacao')">Operação</button>
+</nav>
+
+<!-- ═══════════════════════════════════════ HOME ══════════════════════════════ -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-tag">Apostila Visual Completa</div>
+    <h1>Sonorização ao Vivo<br><span>para Igrejas</span></h1>
+    <p>Todos os capítulos em mapas mentais, gráficos interativos e explicações visuais. Do cabo ao culto.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="n">16</div><div class="l">Capítulos</div></div>
+      <div class="hero-stat"><div class="n">7</div><div class="l">Elos do PA</div></div>
+      <div class="hero-stat"><div class="n">10</div><div class="l">Bandas de EQ</div></div>
+      <div class="hero-stat"><div class="n">∞</div><div class="l">Possibilidades</div></div>
+    </div>
+  </div>
+  <div class="page-inner">
+
+    <!-- Tópicos -->
+    <div class="sub"><h3>Selecione um capítulo para estudar</h3></div>
+    <div class="topic-grid">
+      <div class="topic-card" style="--tc:#2dd4bf" onclick="goPage('intro')"><div class="tc-num">CAP 1–2</div><div class="tc-name">Introdução</div><div class="tc-desc">Base bíblica e os 3 grupos do louvor</div><div class="tc-arrow">→</div></div>
+      <div class="topic-card" style="--tc:#f87171" onclick="goPage('corrente')"><div class="tc-num">CAP 3</div><div class="tc-name">Os 7 Elos</div><div class="tc-desc">O modelo PA e a corrente de sonorização</div><div class="tc-arrow">→</div></div>
+      <div class="topic-card" style="--tc:#a78bfa" onclick="goPage('cabos')"><div class="tc-num">CAP 4</div><div class="tc-name">Cabos</div><div class="tc-desc">Tipos, bitola, blindagem e casos reais</div><div class="tc-arrow">→</div></div>
+      <div class="topic-card" style="--tc:#f5a623" onclick="goPage('conectores')"><div class="tc-num">CAP 5</div><div class="tc-name">Conectores</div><div class="tc-desc">XLR, P10, Speakon, RCA e soldagem</div><div class="tc-arrow">→</div></div>
+      <div class="topic-card" style="--tc:#4a9eff" onclick="goPage('microfones')"><div class="tc-num">CAP 6</div><div class="tc-name">Microfones</div><div class="tc-desc">Tipos, padrões polares e problemas comuns</div><div class="tc-arrow">→</div></div>
+      <div class="topic-card" style="--tc:#4ade80" onclick="goPage('processamento')"><div class="tc-num">CAP 7</div><div class="tc-name">Processamento</div><div class="tc-desc">Caixas amplificadas, cabeçotes e cubos</div><div class="tc-arrow">→</div></div>
+      <div class="topic-card" style="--tc:#f5a623;border:1px solid rgba(245,166,35,.3)" onclick="goPage('mesa')"><div class="tc-num">CAP 8 ⭐</div><div class="tc-name">Mesa de som</div><div class="tc-desc">O centro de comando — o capítulo mais importante</div><div class="tc-arrow">→</div></div>
+      <div class="topic-card" style="--tc:#2dd4bf" onclick="goPage('teoria')"><div class="tc-num">CAP 9</div><div class="tc-name">Teoria de áudio</div><div class="tc-desc">Frequência, dB, fase, timbre e ADSR</div><div class="tc-arrow">→</div></div>
+      <div class="topic-card" style="--tc:#facc15" onclick="goPage('equalizador')"><div class="tc-num">CAP 10</div><div class="tc-name">Equalizador</div><div class="tc-desc">EQ gráfico interativo com presets prontos</div><div class="tc-arrow">→</div></div>
+      <div class="topic-card" style="--tc:#a78bfa" onclick="goPage('dinamica')"><div class="tc-num">CAP 11</div><div class="tc-name">Dinâmica</div><div class="tc-desc">Compressor, gate, limitador e expansor</div><div class="tc-arrow">→</div></div>
+      <div class="topic-card" style="--tc:#e05c2f" onclick="goPage('amplificador')"><div class="tc-num">CAP 12</div><div class="tc-name">Amplificadores</div><div class="tc-desc">Potência, proteção e conexões</div><div class="tc-arrow">→</div></div>
+      <div class="topic-card" style="--tc:#4a9eff" onclick="goPage('projecao')"><div class="tc-num">CAP 13–14</div><div class="tc-name">Projeção</div><div class="tc-desc">Conexões, caixas e alto-falantes</div><div class="tc-arrow">→</div></div>
+      <div class="topic-card" style="--tc:#4ade80" onclick="goPage('acustica')"><div class="tc-num">CAP 15</div><div class="tc-name">Acústica</div><div class="tc-desc">Reverberação, materiais e igrejas</div><div class="tc-arrow">→</div></div>
+      <div class="topic-card" style="--tc:#f472b6" onclick="goPage('operacao')"><div class="tc-num">CAP 16</div><div class="tc-name">Operação</div><div class="tc-desc">Caráter, ministério e postura do técnico</div><div class="tc-arrow">→</div></div>
+    </div>
+
+    <!-- Dashboard gráficos -->
+    <div class="sub" style="margin-top:2rem"><h3>Visão geral do sistema de som</h3></div>
+    <div class="cards c2" style="margin-bottom:1.2rem">
+      <div class="chart-box"><div class="chart-title">Nível de sinal na cadeia de áudio</div><div class="h160"><canvas id="h-cabos"></canvas></div><div class="chart-sub">Escala logarítmica — de milivolts (microfone) a 25V+ (saída de amplificador)</div></div>
+      <div class="chart-box"><div class="chart-title">Evolução do sistema por porte</div><div class="h160"><canvas id="h-evol"></canvas></div><div class="chart-sub">Qualidade potencial vs facilidade de uso por tipo de sistema</div></div>
+    </div>
+    <div class="cards c2" style="margin-bottom:1.2rem">
+      <div class="chart-box"><div class="chart-title">Frequências do espectro audível</div><div class="h160"><canvas id="h-spec"></canvas></div><div class="chart-sub">Distribuição de instrumentos e vozes por faixa de frequência</div></div>
+      <div class="chart-box"><div class="chart-title">Potência recomendada por porte da igreja</div><div class="h160"><canvas id="h-amp"></canvas></div><div class="chart-sub">Valores RMS orientativos para sistemas com caixas de 98dB de sensibilidade</div></div>
+    </div>
+    <div class="chart-box" style="margin-bottom:1.2rem"><div class="chart-title">RT60 ideal — tempo de reverberação por uso</div><div class="h200"><canvas id="h-rt60"></canvas></div><div class="chart-sub">Igrejas evangélicas que alternam palavra e louvor devem mirar 0,8–1,2s</div></div>
+
+    <!-- Corrente resumida -->
+    <div class="sub" style="margin-top:.5rem"><h3>Os 7 elos da corrente — resumo</h3></div>
+    <div class="mm-wrap">
+      <svg viewBox="0 0 740 200" xmlns="http://www.w3.org/2000/svg">
+        <defs><marker id="ma" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#f5a623" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
+        <!-- elos -->
+        <g onclick="goPage('microfones')" style="cursor:pointer"><rect x="10" y="80" width="88" height="40" rx="7" fill="#1c2030" stroke="#2dd4bf" stroke-width="1"/><text x="54" y="96" text-anchor="middle" font-family="Syne,sans-serif" font-size="10" font-weight="700" fill="#2dd4bf">1·Captação</text><text x="54" y="112" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#8891a8">microfones</text></g>
+        <line x1="98" y1="100" x2="112" y2="100" stroke="#f5a623" stroke-width="1" marker-end="url(#ma)"/>
+        <g onclick="goPage('cabos')" style="cursor:pointer"><rect x="112" y="80" width="88" height="40" rx="7" fill="#1c2030" stroke="#a78bfa" stroke-width="1"/><text x="156" y="96" text-anchor="middle" font-family="Syne,sans-serif" font-size="10" font-weight="700" fill="#a78bfa">2·Interligação</text><text x="156" y="112" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#8891a8">cabos/conect.</text></g>
+        <line x1="200" y1="100" x2="214" y2="100" stroke="#f5a623" stroke-width="1" marker-end="url(#ma)"/>
+        <g onclick="goPage('mesa')" style="cursor:pointer"><rect x="214" y="80" width="88" height="40" rx="7" fill="#1c2030" stroke="#4a9eff" stroke-width="1"/><text x="258" y="96" text-anchor="middle" font-family="Syne,sans-serif" font-size="10" font-weight="700" fill="#4a9eff">3·Processamento</text><text x="258" y="112" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#8891a8">mesa / EQ</text></g>
+        <line x1="302" y1="100" x2="316" y2="100" stroke="#f5a623" stroke-width="1" marker-end="url(#ma)"/>
+        <g onclick="goPage('amplificador')" style="cursor:pointer"><rect x="316" y="80" width="88" height="40" rx="7" fill="#1c2030" stroke="#e05c2f" stroke-width="1"/><text x="360" y="96" text-anchor="middle" font-family="Syne,sans-serif" font-size="10" font-weight="700" fill="#e05c2f">4·Amplificação</text><text x="360" y="112" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#8891a8">amplificador</text></g>
+        <line x1="404" y1="100" x2="418" y2="100" stroke="#f5a623" stroke-width="1" marker-end="url(#ma)"/>
+        <g onclick="goPage('projecao')" style="cursor:pointer"><rect x="418" y="80" width="88" height="40" rx="7" fill="#1c2030" stroke="#f472b6" stroke-width="1"/><text x="462" y="96" text-anchor="middle" font-family="Syne,sans-serif" font-size="10" font-weight="700" fill="#f472b6">5·Projeção</text><text x="462" y="112" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#8891a8">caixas acúst.</text></g>
+        <line x1="506" y1="100" x2="520" y2="100" stroke="#f5a623" stroke-width="1" marker-end="url(#ma)"/>
+        <g onclick="goPage('acustica')" style="cursor:pointer"><rect x="520" y="80" width="88" height="40" rx="7" fill="#1c2030" stroke="#4ade80" stroke-width="1"/><text x="564" y="96" text-anchor="middle" font-family="Syne,sans-serif" font-size="10" font-weight="700" fill="#4ade80">6·Acústica</text><text x="564" y="112" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#8891a8">ambiente</text></g>
+        <line x1="608" y1="100" x2="622" y2="100" stroke="#f5a623" stroke-width="1" marker-end="url(#ma)"/>
+        <g onclick="goPage('operacao')" style="cursor:pointer"><rect x="622" y="80" width="108" height="40" rx="7" fill="#252a3a" stroke="#f5a623" stroke-width="1.5" stroke-dasharray="5 3"/><text x="676" y="96" text-anchor="middle" font-family="Syne,sans-serif" font-size="10" font-weight="700" fill="#f5a623">7·Operação ✦</text><text x="676" y="112" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#8891a8">técnico + espiritual</text></g>
+        <text x="370" y="165" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#8891a8">clique em qualquer elo para abrir a página do capítulo</text>
+        <text x="370" y="20" text-anchor="middle" font-family="Syne,sans-serif" font-size="11" font-weight="700" fill="#f5a623">A força da corrente = seu elo mais fraco</text>
+        </svg>
+    </div>
+
+    <!-- Imagens de exemplo -->
+    <div class="sub" style="margin-top:1rem"><h3>Imagens de exemplo</h3></div>
+    <div class="cards c3" style="margin-top:.8rem">
+      <div class="card card-lt" style="text-align:center;cursor:pointer" onclick="goPage('microfones')" role="button" aria-label="Exemplo Microfones">
+        <div style="height:140px;display:flex;align-items:center;justify-content:center">
+          <!-- Microfone SVG -->
+          <svg width="120" height="120" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect x="26" y="8" width="12" height="26" rx="6" fill="var(--bg3)" stroke="var(--accent)" stroke-width="1.5"/>
+            <rect x="28" y="34" width="8" height="8" rx="2" fill="var(--bg3)" stroke="var(--accent)" stroke-width="1"/>
+            <path d="M20 46h24" stroke="rgba(255,255,255,.06)" stroke-width="2" stroke-linecap="round"/>
+            <path d="M32 46v6" stroke="var(--muted)" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h4 style="margin-top:.6rem">Microfones — exemplo</h4>
+        <p style="color:var(--muted);font-size:13px;margin-top:.2rem">Clique para abrir o capítulo de Microfones</p>
+      </div>
+
+      <div class="card card-lp" style="text-align:center;cursor:pointer" onclick="goPage('cabos')" role="button" aria-label="Exemplo Cabos">
+        <div style="height:140px;display:flex;align-items:center;justify-content:center">
+          <!-- Cabos SVG -->
+          <svg width="140" height="80" viewBox="0 0 140 80" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="18" cy="40" r="10" fill="var(--bg3)" stroke="#a78bfa" stroke-width="1.6"/>
+            <circle cx="122" cy="40" r="10" fill="var(--bg3)" stroke="#a78bfa" stroke-width="1.6"/>
+            <path d="M28 40 C50 40,90 20,112 20" stroke="rgba(255,255,255,.06)" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <path d="M28 40 C50 40,90 60,112 60" stroke="rgba(255,255,255,.06)" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/>
+          </svg>
+        </div>
+        <h4 style="margin-top:.6rem">Cabos — exemplo</h4>
+        <p style="color:var(--muted);font-size:13px;margin-top:.2rem">Clique para abrir o capítulo de Cabos</p>
+      </div>
+
+      <div class="card card-lb" style="text-align:center;cursor:pointer" onclick="goPage('mesa')" role="button" aria-label="Exemplo Mesa de Som">
+        <div style="height:140px;display:flex;align-items:center;justify-content:center">
+          <!-- Mesa (mixer) SVG -->
+          <svg width="140" height="80" viewBox="0 0 140 80" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect x="12" y="18" width="116" height="44" rx="6" fill="var(--bg3)" stroke="var(--accent)" stroke-width="1"/>
+            <!-- sliders -->
+            <rect x="26" y="28" width="6" height="24" rx="3" fill="#2dd4bf"/>
+            <circle cx="29" cy="36" r="5" fill="#2dd4bf" stroke="#ffffff22"/>
+            <rect x="56" y="28" width="6" height="24" rx="3" fill="#f5a623"/>
+            <circle cx="59" cy="42" r="5" fill="#f5a623" stroke="#ffffff22"/>
+            <rect x="86" y="28" width="6" height="24" rx="3" fill="#4a9eff"/>
+            <circle cx="89" cy="30" r="5" fill="#4a9eff" stroke="#ffffff22"/>
+          </svg>
+        </div>
+        <h4 style="margin-top:.6rem">Mesa de som — exemplo</h4>
+        <p style="color:var(--muted);font-size:13px;margin-top:.2rem">Clique para abrir o capítulo da Mesa</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ INTRO ════════════════════════════ -->
+<div class="page" id="page-intro">
+  <div class="page-inner">
+    <div class="page-badge ba">CAP 1–2</div>
+    <div class="page-h1">Introdução e Organização do Louvor</div>
+    <div class="page-desc">A base bíblica do trabalho de sonorização e o papel de cada grupo na equipe de louvor.</div>
+    <div class="page-divider"></div>
+    <div class="sub"><h3>O fundamento bíblico</h3><p><em>"A fé é pelo ouvir, e o ouvir pela Palavra de Deus."</em> — Romanos 10:17</p><p>Dos 5 sentidos humanos, a <strong style="color:var(--accent)">audição</strong> é o único canal que a Bíblia indica como caminho para a fé. O operador de som, sem abrir a boca, é co-responsável pela salvação de almas — a mensagem precisa chegar com clareza a todos, especialmente ao fundo do templo.</p></div>
+    <div class="cards c2">
+      <div class="card card-lt"><div class="tag">sentido correto</div><h4>Audição → Fé</h4><p>Pode ser o templo mais suntuoso do planeta, oferecer o banquete que for, prometer riquezas. Se não houver uma mensagem que atinja o profundo da alma, não haverá fé verdadeira.</p></div>
+      <div class="card card-lb"><div class="tag">sentidos incorretos</div><h4>Visão, Paladar, Tato</h4><p>Templos grandiosos (visão), campanhas de alimentos (paladar), teologia da prosperidade (tato) — nenhum desses caminhos produz fé segundo a Escritura.</p></div>
+    </div>
+    <div class="sub" style="margin-top:1.8rem"><h3>Os 3 grupos do louvor</h3></div>
+    <div class="cards c3">
+      <div class="card card-lt"><div class="tag">grupo 1</div><h4>🎸 Músicos</h4><p>Responsáveis pelos instrumentos. Quanto mais conhecem sobre canto e operação de som, melhores se tornam.</p></div>
+      <div class="card card-lp"><div class="tag">grupo 2</div><h4>🎤 Coral / Cantores</h4><p>Usam as vozes para louvar. Conhecer instrumentos os torna mais versáteis para arranjos.</p></div>
+      <div class="card card-l"><div class="tag">grupo 3</div><h4>🎛 Grupo de Som</h4><p>Operam os equipamentos. O bom operador conhece cada músico: quem é forte, quem desafina, quem faz a base.</p></div>
+    </div>
+    <div class="callout"><span class="ci">💡</span><div>Os 3 grupos são <strong>interdependentes</strong> — nenhum é mais importante. O <strong style="color:var(--accent)">ensaio</strong> é onde o operador treina o ouvido, aprende as características de cada membro e corrige os problemas antes do culto.</div></div>
+    <div class="chart-box" style="margin-top:1.5rem"><div class="chart-title">Interdependência dos 3 grupos do louvor</div><div class="h200"><canvas id="i-grupos"></canvas></div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ CORRENTE ═════════════════════════ -->
+<div class="page" id="page-corrente">
+  <div class="page-inner">
+    <div class="page-badge br">CAP 3</div>
+    <div class="page-h1">Os 7 Elos da Corrente de Sonorização</div>
+    <div class="page-desc">O modelo conceitual central do PA — Public Address / Performance Audio.</div>
+    <div class="page-divider"></div>
+    <div class="callout info"><span class="ci">🔗</span><div><strong>Lei fundamental:</strong> a força de uma corrente é determinada pelo seu <strong style="color:var(--blue)">elo mais fraco</strong>. Não adianta microfones excelentes com amplificadores ruins, ou vice-versa.</div></div>
+    <div class="mm-wrap" style="margin:1.5rem 0">
+      <svg viewBox="0 0 740 380" xmlns="http://www.w3.org/2000/svg">
+        <defs><marker id="mb" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#f5a623" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
+        <!-- Centro -->
+        <ellipse cx="370" cy="190" rx="70" ry="38" fill="#1c2030" stroke="#f5a623" stroke-width="1.5"/>
+        <text x="370" y="186" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="700" fill="#f5a623">PA</text>
+        <text x="370" y="202" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#8891a8">sistema de som</text>
+        <!-- Elos -->
+        <ellipse cx="155" cy="80" rx="66" ry="28" fill="#1c2030" stroke="#2dd4bf" stroke-width="1"/><text x="155" y="76" text-anchor="middle" font-family="Syne,sans-serif" font-size="10" font-weight="700" fill="#2dd4bf">1·Captação</text><text x="155" y="90" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#8891a8">microfones</text>
+        <line x1="210" y1="96" x2="308" y2="166" stroke="#2dd4bf" stroke-width="1" stroke-dasharray="4 3" opacity=".6"/>
+        <ellipse cx="60" cy="190" rx="57" ry="28" fill="#1c2030" stroke="#a78bfa" stroke-width="1"/><text x="60" y="186" text-anchor="middle" font-family="Syne,sans-serif" font-size="10" font-weight="700" fill="#a78bfa">2·Interligação</text><text x="60" y="200" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#8891a8">cabos/conect.</text>
+        <line x1="117" y1="190" x2="300" y2="190" stroke="#a78bfa" stroke-width="1" stroke-dasharray="4 3" opacity=".6"/>
+        <ellipse cx="155" cy="300" rx="66" ry="28" fill="#1c2030" stroke="#4a9eff" stroke-width="1"/><text x="155" y="296" text-anchor="middle" font-family="Syne,sans-serif" font-size="10" font-weight="700" fill="#4a9eff">3·Processamento</text><text x="155" y="310" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#8891a8">mesa/EQ/comp</text>
+        <line x1="210" y1="284" x2="308" y2="216" stroke="#4a9eff" stroke-width="1" stroke-dasharray="4 3" opacity=".6"/>
+        <ellipse cx="585" cy="80" rx="66" ry="28" fill="#1c2030" stroke="#f472b6" stroke-width="1"/><text x="585" y="76" text-anchor="middle" font-family="Syne,sans-serif" font-size="10" font-weight="700" fill="#f472b6">4·Projeção</text><text x="585" y="90" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#8891a8">caixas acúst.</text>
+        <line x1="530" y1="96" x2="432" y2="166" stroke="#f472b6" stroke-width="1" stroke-dasharray="4 3" opacity=".6"/>
+        <ellipse cx="680" cy="190" rx="57" ry="28" fill="#1c2030" stroke="#4ade80" stroke-width="1"/><text x="680" y="186" text-anchor="middle" font-family="Syne,sans-serif" font-size="10" font-weight="700" fill="#4ade80">5·Acústica</text><text x="680" y="200" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#8891a8">ambiente</text>
+        <line x1="623" y1="190" x2="440" y2="190" stroke="#4ade80" stroke-width="1" stroke-dasharray="4 3" opacity=".6"/>
+        <ellipse cx="585" cy="300" rx="66" ry="28" fill="#1c2030" stroke="#f87171" stroke-width="1"/><text x="585" y="296" text-anchor="middle" font-family="Syne,sans-serif" font-size="10" font-weight="700" fill="#f87171">6·Operação</text><text x="585" y="310" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#8891a8">técnico áudio</text>
+        <line x1="530" y1="284" x2="432" y2="216" stroke="#f87171" stroke-width="1" stroke-dasharray="4 3" opacity=".6"/>
+        <ellipse cx="370" cy="355" rx="76" ry="24" fill="#252a3a" stroke="#f5a623" stroke-width="1" stroke-dasharray="5 3"/><text x="370" y="351" text-anchor="middle" font-family="Syne,sans-serif" font-size="10" font-weight="700" fill="#f5a623">7·Parte Espiritual ✦</text><text x="370" y="364" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#8891a8">exclusivo das igrejas</text>
+        <line x1="370" y1="228" x2="370" y2="331" stroke="#f5a623" stroke-width="1" stroke-dasharray="4 3" opacity=".4"/>
+      </svg>
+    </div>
+    <div class="cards c3">
+      <div class="card card-lt"><div class="tag">elo 1</div><h4>Captação</h4><p>Microfones. Erro aqui não tem conserto — nenhum equipamento posterior recupera som mal captado.</p></div>
+      <div class="card card-lp"><div class="tag">elo 2</div><h4>Interligação</h4><p>Cabos e conectores. São os mais frágeis e a maior fonte de problemas no PA.</p></div>
+      <div class="card card-lb"><div class="tag">elo 3</div><h4>Processamento</h4><p>Mesa, EQ, compressores. A qualidade e a ordem de ligação afetam o resultado final.</p></div>
+      <div class="card card-lk"><div class="tag">elo 4</div><h4>Projeção</h4><p>Caixas acústicas. Mau posicionamento cria zonas sem inteligibilidade e provoca feedback.</p></div>
+      <div class="card card-lg"><div class="tag">elo 5</div><h4>Acústica</h4><p>O ambiente modifica o som depois que sai das caixas. Reverberação e reflexões.</p></div>
+      <div class="card card-lr"><div class="tag">elo 6</div><h4>Operação</h4><p>O técnico. Um bom operador com equipamento simples supera um leigo com equipamento de ponta.</p></div>
+    </div>
+    <div class="callout success" style="margin-top:1rem"><span class="ci">✦</span><div><strong>7º elo — Parte Espiritual:</strong> Igrejas têm um elo extra. O operador precisa estar com a vida espiritual em dia — o inimigo atua especialmente na área de som durante o culto.</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ CABOS ════════════════════════════ -->
+<div class="page" id="page-cabos">
+  <div class="page-inner">
+    <div class="page-badge bp">CAP 4</div>
+    <div class="page-h1">Interligação — Cabos</div>
+    <div class="page-desc">A maioria dos problemas de som (tiros, estalos, falhas) começa nos cabos. Nunca os subestime.</div>
+    <div class="page-divider"></div>
+    <div class="callout danger"><span class="ci">⚠️</span><div>Cabos defeituosos podem causar desde degradação do som até <strong style="color:var(--red)">queima de equipamentos</strong>. Embora custem pouco, impactam muito.</div></div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Tipo</th><th>Condutores</th><th>Blindagem</th><th>Uso</th><th>Nível</th></tr></thead>
+        <tbody>
+          <tr><td class="tdh">Paralelo</td><td>2 (sem malha)</td><td>❌</td><td>Extensões domésticas</td><td><span class="badge br">não usar</span></td></tr>
+          <tr><td class="tdh">Coaxial</td><td>2 (fase+malha)</td><td>✅ simples</td><td>Instrumento → mesa</td><td><span class="badge ba">amador</span></td></tr>
+          <tr><td class="tdh">Balanceado</td><td>3 (+, −, malha)</td><td>✅✅ dupla</td><td>Microfone → mesa, saídas profissionais</td><td><span class="badge bt">profissional</span></td></tr>
+          <tr><td class="tdh">Multicabo</td><td>8–32 pares</td><td>✅ individual</td><td>Palco → mesa (longa distância)</td><td><span class="badge bb">produção</span></td></tr>
+          <tr><td class="tdh">Cabo p/ caixa</td><td>2 (grosso)</td><td>❌</td><td>Amplificador → caixa acústica</td><td><span class="badge bp">alta potência</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="cards c2" style="margin-top:1.2rem">
+      <div class="card card-l"><h4>Por que balancear?</h4><p>Cabo balanceado usa 3 condutores: envia o sinal em fase positiva E negativa ao mesmo tempo. Qualquer ruído captado ao longo do cabo é <strong style="color:var(--accent)">cancelado automaticamente na chegada</strong>. Essencial em distâncias longas.</p></div>
+      <div class="card card-lt"><h4>Bitola (AWG / mm²)</h4><p>Quanto mais grosso, menor a resistência e menor a perda de sinal. Amp de 2.000W exige cabo muito mais grosso que amp de 200W. Regra: quanto maior a potência e o comprimento, maior a bitola necessária.</p></div>
+    </div>
+    <div class="chart-box" style="margin-top:1.4rem"><div class="chart-title">Nível de sinal em cada etapa da cadeia</div><div class="h200"><canvas id="c-cabos"></canvas></div><div class="chart-sub">Escala logarítmica — microfones geram milivolts, amplificadores chegam a 25–30V na saída.</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ CONECTORES ═══════════════════════ -->
+<div class="page" id="page-conectores">
+  <div class="page-inner">
+    <div class="page-badge ba">CAP 5</div>
+    <div class="page-h1">Conectores (Plugues)</div>
+    <div class="page-desc">Para cada cabo, um conector específico. Usar o conector errado é garantia de problemas.</div>
+    <div class="page-divider"></div>
+    <div class="conn-grid">
+      <div class="conn-card"><div class="conn-icon">🔵</div><div class="conn-name">XLR / Canon</div><div class="conn-desc">3 pinos · balanceado<br>Pino 1: terra · 2: + · 3: −<br>Norma IEC 268</div><div class="conn-p">✅ Travamento · profissional</div><div class="conn-c">❌ Solda mais difícil</div></div>
+      <div class="conn-card"><div class="conn-icon">⚫</div><div class="conn-name">P10 (¼")</div><div class="conn-desc">Mono (TS) ou estéreo (TRS)<br>2 ou 3 contatos<br>Padrão para instrumentos</div><div class="conn-p">✅ Prático · universal</div><div class="conn-c">❌ Sem travamento</div></div>
+      <div class="conn-card"><div class="conn-icon">🟡</div><div class="conn-name">Speakon (NL4)</div><div class="conn-desc">4 pinos · para caixas<br>Alta potência<br>Travamento por giro</div><div class="conn-p">✅ Seguro · alta corrente</div><div class="conn-c">❌ Só para alto-falantes</div></div>
+      <div class="conn-card"><div class="conn-icon">🔴</div><div class="conn-name">RCA</div><div class="conn-desc">2 pinos · coaxial<br>Desbalanceado<br>Rec Out, CD, consumer</div><div class="conn-p">✅ Simples · barato</div><div class="conn-c">❌ Sem travamento · ruído</div></div>
+      <div class="conn-card"><div class="conn-icon">🟠</div><div class="conn-name">Banana / Borne</div><div class="conn-desc">Alta potência<br>Alternativa ao Speakon<br>Amplificadores simples</div><div class="conn-p">✅ Fácil conexão</div><div class="conn-c">❌ Pode soltar</div></div>
+      <div class="conn-card"><div class="conn-icon">🟤</div><div class="conn-name">P2 (3,5mm)</div><div class="conn-desc">Miniatura estéreo/mono<br>Fones de ouvido<br>Equipamentos consumer</div><div class="conn-p">✅ Universal · compacto</div><div class="conn-c">❌ Frágil · não profissional</div></div>
+    </div>
+    <div class="sub" style="margin-top:1.8rem"><h3>Pinagem XLR — norma IEC 268</h3></div>
+    <div class="cards c3">
+      <div class="card card-lr"><h4>Pino 1 — Terra (GND)</h4><p>Malha de blindagem. Aterramento. SLEEVE no P10 TRS.</p></div>
+      <div class="card card-lg"><h4>Pino 2 — Positivo (+)</h4><p>Fase positiva do sinal. TIP no P10 TRS.</p></div>
+      <div class="card card-lb"><h4>Pino 3 — Negativo (−)</h4><p>Fase negativa do sinal. RING no P10 TRS.</p></div>
+    </div>
+    <div class="callout success" style="margin-top:1rem"><span class="ci">✅</span><div><strong>Marcas recomendadas:</strong> Neutrik, Amphenol, Switchcraft, Santo Ângelo. Custam até 5× mais que genéricos, mas duram 10× mais.</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ MICROFONES ═══════════════════════ -->
+<div class="page" id="page-microfones">
+  <div class="page-inner">
+    <div class="page-badge bb">CAP 6</div>
+    <div class="page-h1">Captação — Microfones</div>
+    <div class="page-desc">Não existe microfone ruim, existe microfone usado errado. Um erro na captação não tem conserto depois.</div>
+    <div class="page-divider"></div>
+    <div class="callout"><span class="ci">🎙</span><div>Microfone é um <strong style="color:var(--accent)">transdutor</strong>: converte energia acústica em elétrica. As caixas de som fazem o caminho inverso.</div></div>
+    <div class="cards c3" style="margin-top:1.2rem">
+      <div class="card card-l"><div class="tag">vocal</div><h4>🎤 Microfone de mão</h4><p>Shure SM58 — padrão mundial. Cardioide. Para cantores e pregadores com mobilidade.</p></div>
+      <div class="card card-lt"><div class="tag">discreto</div><h4>🔵 Lapela</h4><p>Preso à roupa. Omnidirecional. Ideal para pregadores em movimento. Resposta 20Hz–20kHz.</p></div>
+      <div class="card card-lb"><div class="tag">fixo</div><h4>🐍 Gooseneck</h4><p>Haste flexível no púlpito. Hipercardioide. Para prédicas fixas. 150Hz–14,5kHz.</p></div>
+      <div class="card card-lp"><div class="tag">vocal</div><h4>🎧 Headset</h4><p>Fixo na cabeça, libera as mãos. Para ministros de louvor que cantam e se movimentam.</p></div>
+      <div class="card card-lg"><div class="tag">coral</div><h4>🎵 Overhead</h4><p>Acima do coral ou bateria. Capta o conjunto. Cardioide ou omnidirecional.</p></div>
+      <div class="card card-lk"><div class="tag">sem fio</div><h4>📡 Sem fio (RF)</h4><p>Liberdade total. Cuidado com frequências, interferências e baterias.</p></div>
+    </div>
+    <div class="sub" style="margin-top:1.8rem"><h3>Padrões de captação (direcionalidade)</h3></div>
+    <div class="polar-wrap">
+      <div class="polar-tabs">
+        <button class="polar-btn active" onclick="drawPolar('cardioide',this)">Cardioide</button>
+        <button class="polar-btn" onclick="drawPolar('supercardioide',this)">Supercardioide</button>
+        <button class="polar-btn" onclick="drawPolar('omnidirecional',this)">Omnidirecional</button>
+        <button class="polar-btn" onclick="drawPolar('bidirecional',this)">Bidirecional (Fig-8)</button>
+      </div>
+      <div style="display:flex;gap:1.2rem;flex-wrap:wrap;align-items:flex-start">
+        <div class="polar-canvas-wrap"><canvas id="polarCanvas"></canvas></div>
+        <div style="flex:1;min-width:180px"><div id="polarInfo" style="font-size:13px;color:var(--muted);line-height:1.7"></div></div>
+      </div>
+    </div>
+    <div class="sub" style="margin-top:1.8rem"><h3>Problemas comuns na captação</h3></div>
+    <div class="cards c2">
+      <div class="card card-lr"><div class="tag">crítico</div><h4>🔊 Microfonia (Feedback)</h4><p>O som das caixas entra no microfone e cria um loop. Causas: ganho alto, mic na frente das caixas, frequência de ressonância. Solução: posicionamento correto, EQ e Low Cut.</p></div>
+      <div class="card card-l"><div class="tag">técnica</div><h4>🔉 Efeito de Proximidade</h4><p>Reforço de graves quando o mic está muito perto da boca (&lt;3cm). Pode ser usado artisticamente ou se tornar problema com vozes muito graves.</p></div>
+      <div class="card card-lb"><div class="tag">frequência</div><h4>😤 Sibilância e Plosivas</h4><p>Estouros de "S" e "P/B". Sibilância: cortar 5–8kHz. Plosivas: protetor de espuma e posição lateral do mic.</p></div>
+      <div class="card card-lp"><div class="tag">posicionamento</div><h4>🔀 Vazamento (Bleed)</h4><p>Mic de um músico capta o som do vizinho. Use padrões direcionais e aumente a separação física entre as fontes sonoras.</p></div>
+    </div>
+    <div class="chart-box" style="margin-top:1.4rem"><div class="chart-title">Resposta de frequência — comparativo de microfones</div><div class="h240"><canvas id="c-mics"></canvas></div><div class="chart-sub">SM58: ênfase em 5–10kHz (presença vocal). Lapela: resposta plana. Gooseneck: corte abaixo de 150Hz.</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ PROCESSAMENTO ════════════════════ -->
+<div class="page" id="page-processamento">
+  <div class="page-inner">
+    <div class="page-badge bg">CAP 7</div>
+    <div class="page-h1">Processamento de Sinal</div>
+    <div class="page-desc">Caixas amplificadas, cabeçotes e cubos — a evolução do sistema de som nas igrejas.</div>
+    <div class="page-divider"></div>
+    <div class="cards c3">
+      <div class="card card-l"><div class="tag">all-in-one</div><h4>📦 Caixa Amplificada</h4><p>Mesa + amplificador + caixa num único equipamento. O mais vendido no Brasil. Limitação crítica: <strong style="color:var(--accent)">EQ compartilhado por todos os canais</strong>.</p></div>
+      <div class="card card-lb"><div class="tag">semi-profissional</div><h4>📻 Cabeçote</h4><p>Caixa amplificada sem a projeção. Usa caixas externas. Alguns modelos têm EQ independente por canal. Mais flexível.</p></div>
+      <div class="card card-lt"><div class="tag">especializado</div><h4>🎸 Cubo</h4><p>Amplificador para <em>um único instrumento</em>. Qualidade excelente para aquele instrumento. Exige modelo específico: baixo, guitarra, teclado, violão.</p></div>
+    </div>
+    <div class="callout info" style="margin-top:1rem"><span class="ci">💡</span><div>O cubo de <strong style="color:var(--blue)">contrabaixo</strong> é o mais recomendado. Sons graves se espalham pelo ambiente — o músico controla o próprio volume sem depender da mesa.</div></div>
+    <div class="chart-box" style="margin-top:1.4rem"><div class="chart-title">Qualidade, flexibilidade e facilidade por tipo de sistema</div><div class="h240"><canvas id="c-evol"></canvas></div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ MESA ═════════════════════════════ -->
+<div class="page" id="page-mesa">
+  <div class="page-inner">
+    <div class="page-badge ba">CAP 8 ⭐</div>
+    <div class="page-h1">A Mesa de Som (Console / Mixer)</div>
+    <div class="page-desc">O centro de comando de todo o sistema — a peça mais importante de qualquer sonorização.</div>
+    <div class="page-divider"></div>
+    <div class="sub"><h3>Fluxo do sinal dentro da mesa</h3></div>
+    <div class="sigchain">
+      <div class="sig-box" style="border-left:3px solid var(--teal)">Entrada<br><small style="color:var(--muted);font-size:10px">MIC/LINE · XLR · P10</small></div><div class="sig-arr">→</div>
+      <div class="sig-box" style="border-left:3px solid var(--blue)">Ganho (GAIN)<br><small style="color:var(--muted);font-size:10px">nível + Phantom 48V</small></div><div class="sig-arr">→</div>
+      <div class="sig-box" style="border-left:3px solid var(--purple)">EQ por canal<br><small style="color:var(--muted);font-size:10px">grav · méd · agud · lowcut</small></div><div class="sig-arr">→</div>
+      <div class="sig-box" style="border-left:3px solid var(--accent)">Auxiliares<br><small style="color:var(--muted);font-size:10px">monitor · efeito</small></div><div class="sig-arr">→</div>
+      <div class="sig-box" style="border-left:3px solid var(--pink)">Fader + PAN<br><small style="color:var(--muted);font-size:10px">volume · mute · pfl</small></div><div class="sig-arr">→</div>
+      <div class="sig-box" style="background:rgba(245,166,35,.08);border-color:var(--accent)">MASTER L/R<br><small style="color:var(--muted);font-size:10px">VU · rec out · XLR</small></div>
+    </div>
+    <div class="sub" style="margin-top:1.8rem"><h3>Comparativo das séries profissionais</h3></div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Recurso</th><th>MXS (amador)</th><th>AMBW (semiprofissional)</th><th>CSM (profissional)</th></tr></thead>
+        <tbody>
+          <tr><td>Entrada MIC</td><td>P10</td><td class="tdh">XLR balanceado</td><td class="tdh">XLR balanceado</td></tr>
+          <tr><td>Ganho / TRIM</td><td>❌</td><td class="tdh">✅</td><td class="tdh">✅</td></tr>
+          <tr><td>EQ por canal</td><td>Graves / Agudos</td><td class="tdh">Grav / Méd / Agu</td><td class="tdh">+ varredura médios</td></tr>
+          <tr><td>Phantom Power</td><td>❌</td><td class="tdh">✅</td><td class="tdh">✅ por canal</td></tr>
+          <tr><td>Low Cut (100Hz)</td><td>❌</td><td>❌</td><td class="tdh">✅</td></tr>
+          <tr><td>PFL / SOLO</td><td>❌</td><td class="tdh">✅</td><td class="tdh">✅</td></tr>
+          <tr><td>Direct Out</td><td>❌</td><td>❌</td><td class="tdh">✅</td></tr>
+          <tr><td>Saída Master</td><td>P10 / RCA</td><td class="tdh">XLR balanceado</td><td class="tdh">XLR balanceado</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout success" style="margin-top:1rem"><span class="ci">🎯</span><div>Todos os recursos da MXS também existem na AMBW e CSM. <strong>Aprenda bem uma mesa profissional e você saberá operar qualquer outra.</strong></div></div>
+    <div class="chart-box" style="margin-top:1.4rem"><div class="chart-title">Recursos por série de mesa (score comparativo)</div><div class="h200"><canvas id="c-mesa"></canvas></div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ TEORIA ════════════════════════════ -->
+<div class="page" id="page-teoria">
+  <div class="page-inner">
+    <div class="page-badge bt">CAP 9</div>
+    <div class="page-h1">Teoria Geral de Áudio</div>
+    <div class="page-desc">A base para entender equalização, compressão, acústica e tudo que vem depois.</div>
+    <div class="page-divider"></div>
+    <div class="sub"><h3>Espectro audível: 20 Hz a 20.000 Hz</h3></div>
+    <div class="spectrum">
+      <div class="spec-band" style="background:rgba(224,92,47,.15);border:1px solid rgba(224,92,47,.3)"><div class="hz" style="color:#e05c2f">20–80 Hz</div><div class="name" style="color:#e05c2f">Sub-graves</div><div class="desc" style="color:#8891a8">Bumbo, órgão profundo. Sentido no corpo mais que no ouvido.</div></div>
+      <div class="spec-band" style="background:rgba(245,166,35,.12);border:1px solid rgba(245,166,35,.3)"><div class="hz" style="color:#f5a623">80–300 Hz</div><div class="name" style="color:#f5a623">Graves</div><div class="desc" style="color:#8891a8">Contrabaixo, kick, voz masculina grave.</div></div>
+      <div class="spec-band" style="background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3)"><div class="hz" style="color:#4ade80">300Hz–2kHz</div><div class="name" style="color:#4ade80">Médios</div><div class="desc" style="color:#8891a8">Corpo da voz, violão, piano. Principal faixa de inteligibilidade.</div></div>
+      <div class="spec-band" style="background:rgba(74,158,255,.1);border:1px solid rgba(74,158,255,.3)"><div class="hz" style="color:#4a9eff">2–8 kHz</div><div class="name" style="color:#4a9eff">Méd-agudos</div><div class="desc" style="color:#8891a8">Presença, ataque, clareza vocal. Consoantes.</div></div>
+      <div class="spec-band" style="background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3)"><div class="hz" style="color:#a78bfa">8–20 kHz</div><div class="name" style="color:#a78bfa">Agudos</div><div class="desc" style="color:#8891a8">Brilho, ar, pratos, sibilância.</div></div>
+    </div>
+    <div class="cards c2" style="margin-top:1.2rem">
+      <div class="card card-l"><h4>Frequência (Hz)</h4><p>Número de ciclos por segundo. Determina o tom (grave ou agudo). 20Hz = mais grave. 20kHz = mais agudo audível.</p></div>
+      <div class="card card-lb"><h4>Amplitude (dB)</h4><p>Intensidade da onda. Escala logarítmica: <strong style="color:var(--blue)">+3dB = dobro da potência</strong>. +10dB = percepção de 2× mais alto.</p></div>
+      <div class="card card-lt"><h4>Fase de onda</h4><p>Duas ondas idênticas fora de fase se <strong style="color:var(--teal)">cancelam</strong>. Crítico ao usar múltiplos microfones. Aplique a regra dos 3:1 no posicionamento.</p></div>
+      <div class="card card-lp"><h4>Envelope (ADSR)</h4><p><strong style="color:var(--purple)">A</strong>taque · <strong style="color:var(--purple)">D</strong>ecaimento · <strong style="color:var(--purple)">S</strong>ustentação · <strong style="color:var(--purple)">R</strong>elease. Compressores atuam sobre o envelope do som.</p></div>
+      <div class="card card-lg"><h4>Timbre e Harmônicos</h4><p>Cada instrumento tem frequência fundamental + harmônicos que formam o timbre único. É o que distingue violão de teclado na mesma nota.</p></div>
+      <div class="card card-lk"><h4>Decibel (dB)</h4><p>0 dB = limiar da audição. 85 dB = concerto normal. 120 dB = limiar da dor. Na mesa: manter entre −18 e −6 dBFS.</p></div>
+    </div>
+    <div class="chart-box" style="margin-top:1.4rem"><div class="chart-title">Tessitura musical — faixas de frequência por instrumento/voz</div><div class="h260"><canvas id="c-tessitura"></canvas></div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ EQUALIZADOR ══════════════════════ -->
+<div class="page" id="page-equalizador">
+  <div class="page-inner">
+    <div class="page-badge" style="background:rgba(250,204,21,.15);color:#facc15;border:1px solid rgba(250,204,21,.3)">CAP 10</div>
+    <div class="page-h1">Equalizadores Gráficos</div>
+    <div class="page-desc">Controle visual e interativo das frequências — ajuste e veja o resultado em tempo real.</div>
+    <div class="page-divider"></div>
+    <div class="sub"><h3>O que é equalização?</h3><p>Equalizar é <strong style="color:var(--accent)">aumentar ou reduzir o volume de frequências específicas</strong>. O EQ de canal (na mesa) atua em cada instrumento individualmente. O EQ gráfico externo atua no sistema inteiro.</p><p><strong style="color:var(--accent)">Regra de ouro:</strong> sempre corte antes de aumentar. Reduzir uma frequência problemática soa mais natural do que aumentar a oposta.</p></div>
+    <!-- EQ INTERATIVO -->
+    <div class="eq-board">
+      <div style="font-family:var(--font-head);font-size:13px;font-weight:700;margin-bottom:.9rem">🎛 Equalizador Gráfico Interativo — 10 bandas</div>
+      <div class="eq-presets">
+        <button class="eq-pbtn active" onclick="applyPreset('flat',this)">Flat</button>
+        <button class="eq-pbtn" onclick="applyPreset('voz',this)">Voz / Pregador</button>
+        <button class="eq-pbtn" onclick="applyPreset('louvor',this)">Louvor / Música</button>
+        <button class="eq-pbtn" onclick="applyPreset('feedback',this)">Anti-Feedback</button>
+        <button class="eq-pbtn" onclick="applyPreset('acustica',this)">Amb. Reverb.</button>
+        <button class="eq-pbtn" onclick="applyPreset('baixo',this)">Reforço Graves</button>
+      </div>
+      <div class="eq-display"><div class="eq-canvas-wrap"><canvas id="eqCanvas"></canvas></div></div>
+      <div class="eq-sliders" id="eqSliders"></div>
+      <div id="eqDesc" style="font-size:12px;color:var(--muted);padding:.4rem 0;min-height:2rem"></div>
+    </div>
+    <div class="sub" style="margin-top:2rem"><h3>O que cada frequência faz no som</h3></div>
+    <div class="eq-info-grid">
+      <div class="eq-bi" style="border-color:#e05c2f"><h5 style="color:#e05c2f">31 Hz — Sub-grave</h5><p>Sentido no corpo. Cortar libera potência para o que importa.</p></div>
+      <div class="eq-bi" style="border-color:#f5a623"><h5 style="color:#f5a623">63 Hz — Grave profundo</h5><p>Bumbo e contrabaixo. Excesso = som lamacento.</p></div>
+      <div class="eq-bi" style="border-color:#facc15"><h5 style="color:#facc15">125 Hz — Grave médio</h5><p>Corpo da voz masculina. Excesso = voz "caixão".</p></div>
+      <div class="eq-bi" style="border-color:#84cc16"><h5 style="color:#84cc16">250 Hz — Médio-grave</h5><p>Espessura da voz. Reduzir levemente aumenta clareza.</p></div>
+      <div class="eq-bi" style="border-color:#4ade80"><h5 style="color:#4ade80">500 Hz — Médio</h5><p>Nasalidade, "caixinha". Excesso = som d'água.</p></div>
+      <div class="eq-bi" style="border-color:#2dd4bf"><h5 style="color:#2dd4bf">1 kHz — Médio</h5><p>Corpo de guitarra e piano. Excesso = metálico.</p></div>
+      <div class="eq-bi" style="border-color:#4a9eff"><h5 style="color:#4a9eff">2 kHz — Méd-agudo</h5><p>Ataque de cordas. Excesso cansa o ouvido.</p></div>
+      <div class="eq-bi" style="border-color:#818cf8"><h5 style="color:#818cf8">4 kHz — Presença</h5><p>Clareza das consoantes. Aumentar ajuda a entender o pregador.</p></div>
+      <div class="eq-bi" style="border-color:#a78bfa"><h5 style="color:#a78bfa">8 kHz — Agudo</h5><p>Brilho, sibilância. Controlar para não agredir o ouvido.</p></div>
+      <div class="eq-bi" style="border-color:#f472b6"><h5 style="color:#f472b6">16 kHz — Ar</h5><p>Textura etérea. Aumentar "abre" o som.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ DINÂMICA ═════════════════════════ -->
+<div class="page" id="page-dinamica">
+  <div class="page-inner">
+    <div class="page-badge bp">CAP 11</div>
+    <div class="page-h1">Processadores de Dinâmica</div>
+    <div class="page-desc">Compressores, Gates, Limitadores e Expansores — controle automático do volume.</div>
+    <div class="page-divider"></div>
+    <div class="cards c2">
+      <div class="card card-l"><div class="tag">mais usado</div><h4>📊 Compressor</h4><p>Reduz picos acima de um limiar (threshold). Parâmetros: <span class="badge bt">ratio</span> <span class="badge bb">attack</span> <span class="badge bp">release</span> <span class="badge ba">make-up gain</span>. Ideal para voz de pregador com volume variável.</p></div>
+      <div class="card card-lr"><div class="tag">proteção</div><h4>🚫 Limitador</h4><p>Compressor com ratio infinito (∞:1). Bloqueia qualquer pico acima do threshold. Protege amplificadores e caixas. Sempre na saída master.</p></div>
+      <div class="card card-lb"><div class="tag">silêncio</div><h4>🔕 Gate (Noise Gate)</h4><p>Fecha o canal quando o sinal cai abaixo do threshold. Elimina ruído de fundo, respiração, vazamento. Muito usado em bumbo e caixa da bateria.</p></div>
+      <div class="card card-lt"><div class="tag">dinâmica</div><h4>📈 Expansor</h4><p>Inverso do compressor: aumenta a diferença entre sons fortes e fracos. Melhora o impacto de percussão.</p></div>
+    </div>
+    <div class="chart-box" style="margin-top:1.4rem"><div class="chart-title">Curva de transferência — sem compressão vs. ratio 4:1 (threshold −20dB)</div><div class="h240"><canvas id="c-comp"></canvas></div><div class="chart-sub">Acima do threshold, a saída cresce mais devagar que a entrada. O ganho "perdido" pode ser reposto com o make-up gain.</div></div>
+    <div class="tbl-wrap" style="margin-top:1.2rem">
+      <table class="tbl">
+        <thead><tr><th>Parâmetro</th><th>O que faz</th><th>Valor típico para voz</th></tr></thead>
+        <tbody>
+          <tr><td class="tdh">Threshold</td><td>Nível onde a compressão começa</td><td>−20 a −12 dBFS</td></tr>
+          <tr><td class="tdh">Ratio</td><td>Taxa de compressão (input:output)</td><td>3:1 a 5:1</td></tr>
+          <tr><td class="tdh">Attack</td><td>Tempo para a compressão reagir</td><td>5–20ms</td></tr>
+          <tr><td class="tdh">Release</td><td>Tempo para soltar a compressão</td><td>100–300ms</td></tr>
+          <tr><td class="tdh">Make-up Gain</td><td>Recupera o volume após compressão</td><td>+2 a +6dB</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ AMPLIFICADOR ═════════════════════ -->
+<div class="page" id="page-amplificador">
+  <div class="page-inner">
+    <div class="page-badge" style="background:rgba(224,92,47,.15);color:#e05c2f;border:1px solid rgba(224,92,47,.3)">CAP 12</div>
+    <div class="page-h1">Amplificadores de Potência</div>
+    <div class="page-desc">A etapa final antes das caixas — converte o sinal de linha em potência para mover os alto-falantes.</div>
+    <div class="page-divider"></div>
+    <div class="sigchain">
+      <div class="sig-box" style="border-left:3px solid var(--teal)">Mesa<br><small style="color:var(--muted);font-size:10px">sinal fraco</small></div><div class="sig-arr">→</div>
+      <div class="sig-box" style="border-left:3px solid var(--blue)">EQ gráfico</div><div class="sig-arr">→</div>
+      <div class="sig-box" style="border-left:3px solid var(--purple)">Compressor</div><div class="sig-arr">→</div>
+      <div class="sig-box" style="background:rgba(224,92,47,.1);border-color:var(--accent2)"><strong>AMPLIFICADOR</strong></div><div class="sig-arr">→</div>
+      <div class="sig-box" style="border-left:3px solid var(--pink)">Caixas acúst.</div>
+    </div>
+    <div class="cards c2" style="margin-top:1.2rem">
+      <div class="card card-l"><h4>RMS vs. Pico (PMPO)</h4><p><span class="badge bt">RMS</span> = potência contínua real. <span class="badge br">Pico/PMPO</span> = valor de marketing (pode ser 4–8× maior). <strong style="color:var(--accent)">Compare sempre pelo RMS.</strong></p></div>
+      <div class="card card-lb"><h4>Modos de operação</h4><ul><li><strong>Estéreo:</strong> 2 canais independentes</li><li><strong>Bridge:</strong> une os 2 canais — potência máxima, mas impedância mínima dobra</li><li><strong>Paralelo:</strong> 2 saídas idênticas</li></ul></div>
+      <div class="card card-lr"><h4>Circuitos de proteção</h4><ul><li>Proteção térmica (superaquecimento)</li><li>Proteção contra curto-circuito</li><li>Proteção DC (corrente contínua queima caixas)</li><li>Proteção de clipping</li></ul></div>
+      <div class="card card-lt"><h4>Instalação elétrica</h4><p>Amp de 1.000W RMS pode puxar 8–12A da tomada. Calcule a capacidade do disjuntor antes de instalar. Use circuito exclusivo quando possível.</p></div>
+    </div>
+    <div class="chart-box" style="margin-top:1.4rem"><div class="chart-title">Potência RMS recomendada por porte da igreja</div><div class="h200"><canvas id="c-amp"></canvas></div><div class="chart-sub">Valores orientativos para caixas com 98dB de sensibilidade. Ambientes com muito eco exigem mais potência.</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ PROJEÇÃO ═════════════════════════ -->
+<div class="page" id="page-projecao">
+  <div class="page-inner">
+    <div class="page-badge bb">CAP 13–14</div>
+    <div class="page-h1">Conexões e Projeção de Som</div>
+    <div class="page-desc">Interligação do sistema, caixas acústicas e alto-falantes — como o som chega até a congregação.</div>
+    <div class="page-divider"></div>
+    <div class="cards c2" style="margin-bottom:1.2rem">
+      <div class="card card-lt"><div class="tag">cap 13</div><h4>Mono × Estéreo</h4><p><strong style="color:var(--teal)">Mono (recomendado para igrejas):</strong> 1 canal. Toda a congregação ouve a mesma mistura. Sem risco de cancelamentos de fase.<br><br><strong style="color:var(--blue)">Estéreo:</strong> 2 canais. Exige PA simétrico. Quem fica nas laterais pode perder o equilíbrio.</p></div>
+      <div class="card card-lb"><div class="tag">cap 14</div><h4>Tipos de alto-falantes</h4><ul>
+        <li><strong>Subwoofer:</strong> 20–150Hz · 15"–18"</li>
+        <li><strong>Woofer:</strong> 80–2kHz · 10"–15"</li>
+        <li><strong>Driver + Corneta:</strong> 1–15kHz</li>
+        <li><strong>Tweeter:</strong> 5–20kHz · brilho</li>
+      </ul></div>
+    </div>
+    <div class="chart-box"><div class="chart-title">Impedância em associações de caixas acústicas</div><div class="h200"><canvas id="c-imp"></canvas></div><div class="chart-sub">Série: impedâncias somam. Paralelo: resultado = metade. Nunca abaixo da impedância mínima do amplificador.</div></div>
+    <div class="callout danger" style="margin-top:1rem"><span class="ci">⚠️</span><div><strong>Queima de alto-falantes:</strong> a maioria ocorre por <strong style="color:var(--red)">amplificador subdimensionado em clipping</strong>, não por excesso de potência. A distorção injeta energia DC que queima os voice coils.</div></div>
+    <div class="cards c2" style="margin-top:1.2rem">
+      <div class="card card-l"><h4>Crossover passivo vs. ativo</h4><p>Divide as frequências entre os alto-falantes. <strong style="color:var(--accent)">Passivo:</strong> dentro da caixa, sem necessidade de amp extra. <strong style="color:var(--accent)">Ativo:</strong> antes do amp — resultado melhor, mas exige um amp por via.</p></div>
+      <div class="card card-lt"><h4>Caixas ativas</h4><p>Amplificador embutido. Plug and play. Crossover ativo interno. Ótima opção para igrejas que querem qualidade sem complexidade de sistema.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ ACÚSTICA ═════════════════════════ -->
+<div class="page" id="page-acustica">
+  <div class="page-inner">
+    <div class="page-badge bg">CAP 15</div>
+    <div class="page-h1">Acústica</div>
+    <div class="page-desc">O ambiente é o último elo antes do ouvido da congregação. Sem tratamento, toda a tecnologia é sabotada.</div>
+    <div class="page-divider"></div>
+    <div class="cards c2" style="margin-bottom:1.2rem">
+      <div class="card card-lr"><div class="tag">problema</div><h4>Reverberação excessiva</h4><p>Reflexões rápidas que se confundem com o som original. Prejudica especialmente a <strong style="color:var(--red)">inteligibilidade da palavra</strong>. Comum em igrejas de concreto, mármore e vidro.</p></div>
+      <div class="card card-lg"><div class="tag">solução</div><h4>Tratamento acústico</h4><p>Espuma acústica, carpete, cortinas, bancos forrados, pessoas na plateia. O objetivo não é eliminar toda a reverberação — é <em>controlá-la</em>.</p></div>
+    </div>
+    <div class="chart-box"><div class="chart-title">RT60 ideal — tempo de reverberação por tipo de uso</div><div class="h240"><canvas id="c-rt60"></canvas></div><div class="chart-sub">Igrejas que alternam palavra e louvor devem buscar um compromisso em torno de 0,8–1,2s.</div></div>
+    <div class="cards c2" style="margin-top:1.2rem">
+      <div class="card card-lt"><h4>Materiais absorventes</h4><ul>
+        <li>Espuma acústica (médios-agudos)</li>
+        <li>Lã de rocha / fibra de vidro (graves)</li>
+        <li>Carpete (médios-agudos)</li>
+        <li>Cortinas pesadas (ampla faixa)</li>
+        <li>Pessoas na plateia (absorção natural!)</li>
+      </ul></div>
+      <div class="card card-l"><h4>Dicas práticas</h4><ul>
+        <li>Caixas longe das paredes laterais</li>
+        <li>Delay nas caixas do fundo</li>
+        <li>Cortar 125–250Hz no EQ reduz "embolado"</li>
+        <li>Low Cut (100Hz) em todos os vocais</li>
+        <li>Caixas não apontando para superfícies duras</li>
+      </ul></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ OPERAÇÃO ═════════════════════════ -->
+<div class="page" id="page-operacao">
+  <div class="page-inner">
+    <div class="page-badge" style="background:rgba(244,114,182,.15);color:#f472b6;border:1px solid rgba(244,114,182,.3)">CAP 16</div>
+    <div class="page-h1">Operação de Som</div>
+    <div class="page-desc">O capítulo final não é sobre técnica — é sobre caráter, ministério e postura do técnico de áudio.</div>
+    <div class="page-divider"></div>
+    <div class="callout"><span class="ci">💬</span><div><em>"Prefiro um bom operador com equipamento simples, do qual vai tirar o máximo, do que um operador inexperiente com equipamento de ponta."</em></div></div>
+    <div class="virtues" style="margin-top:1.2rem">
+      <div class="virtue"><div class="vnum">01</div><div><h5>Responsabilidade</h5><p>Cuidado com os equipamentos da igreja. Zelar, guardar, organizar.</p></div></div>
+      <div class="virtue"><div class="vnum">02</div><div><h5>Dedicação</h5><p>Servir com excelência sempre, não apenas quando está "inspirado".</p></div></div>
+      <div class="virtue"><div class="vnum">03</div><div><h5>Comprometimento</h5><p>Presença constante. Não deixar a equipe na mão.</p></div></div>
+      <div class="virtue"><div class="vnum">04</div><div><h5>Pontualidade</h5><p>Chegar antes de todos para testar e preparar o sistema.</p></div></div>
+      <div class="virtue"><div class="vnum">05</div><div><h5>Zelo e Organização</h5><p>Cabos enrolados corretamente. Equipamentos protegidos.</p></div></div>
+      <div class="virtue"><div class="vnum">06</div><div><h5>Planejamento</h5><p>Roteiro do culto, lista de canais, soundcheck com antecedência.</p></div></div>
+      <div class="virtue"><div class="vnum">07</div><div><h5>Estudo contínuo</h5><p>Novos equipamentos, novas técnicas. O bom operador nunca para de aprender.</p></div></div>
+      <div class="virtue"><div class="vnum">08</div><div><h5>Atenção</h5><p>Foco total durante o culto. Antecipar problemas antes que aconteçam.</p></div></div>
+    </div>
+    <div class="callout success" style="margin-top:1.2rem"><span class="ci">✦</span><div><strong style="color:var(--green)">O sétimo elo — parte espiritual:</strong> O operador de som é um ministro. Sua vida espiritual em dia com Deus faz parte do trabalho. "A fé é pelo ouvir" — e você é o guardião desse ouvir.</div></div>
+    <div class="mm-wrap" style="margin-top:1.8rem">
+      <svg viewBox="0 0 740 180" xmlns="http://www.w3.org/2000/svg">
+        <defs><marker id="mc" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#f5a623" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
+        <text x="370" y="22" text-anchor="middle" font-family="Syne,sans-serif" font-size="12" font-weight="700" fill="#f5a623">todos os capítulos servem ao propósito do Cap. 16</text>
+        <!-- linha base -->
+        <rect x="10" y="130" width="720" height="30" rx="6" fill="rgba(244,114,182,.06)" stroke="#f472b6" stroke-width="1" stroke-dasharray="5 3"/>
+        <text x="370" y="150" text-anchor="middle" font-family="Syne,sans-serif" font-size="11" font-weight="700" fill="#f472b6">Cap 16 · Operação · Caráter · Ministério · Parte Espiritual ✦</text>
+        <!-- caps acima -->
+        <rect x="10" y="60" width="78" height="32" rx="5" fill="#1c2030" stroke="#2dd4bf" stroke-width=".8"/><text x="49" y="76" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#2dd4bf">Cap 1–2 Intro</text>
+        <rect x="98" y="60" width="78" height="32" rx="5" fill="#1c2030" stroke="#f87171" stroke-width=".8"/><text x="137" y="76" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#f87171">Cap 3 · 7 Elos</text>
+        <rect x="186" y="60" width="78" height="32" rx="5" fill="#1c2030" stroke="#a78bfa" stroke-width=".8"/><text x="225" y="76" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#a78bfa">Cap 4·5 Cabos</text>
+        <rect x="274" y="60" width="78" height="32" rx="5" fill="#1c2030" stroke="#4a9eff" stroke-width=".8"/><text x="313" y="76" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#4a9eff">Cap 6 · Mics</text>
+        <rect x="362" y="60" width="78" height="32" rx="5" fill="#252a3a" stroke="#f5a623" stroke-width="1.5"/><text x="401" y="76" text-anchor="middle" font-family="Syne,sans-serif" font-size="9" font-weight="700" fill="#f5a623">Cap 8 · Mesa ⭐</text>
+        <rect x="450" y="60" width="78" height="32" rx="5" fill="#1c2030" stroke="#facc15" stroke-width=".8"/><text x="489" y="76" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#facc15">Cap 10 · EQ</text>
+        <rect x="538" y="60" width="78" height="32" rx="5" fill="#1c2030" stroke="#e05c2f" stroke-width=".8"/><text x="577" y="76" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#e05c2f">Cap 12 · Amp</text>
+        <rect x="626" y="60" width="84" height="32" rx="5" fill="#1c2030" stroke="#4ade80" stroke-width=".8"/><text x="668" y="76" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#4ade80">Cap 15 · Acúst.</text>
+        <!-- setas para baixo -->
+        <line x1="49" y1="92" x2="49" y2="130" stroke="#2dd4bf" stroke-width=".8" stroke-dasharray="3 3" opacity=".5"/>
+        <line x1="137" y1="92" x2="137" y2="130" stroke="#f87171" stroke-width=".8" stroke-dasharray="3 3" opacity=".5"/>
+        <line x1="225" y1="92" x2="225" y2="130" stroke="#a78bfa" stroke-width=".8" stroke-dasharray="3 3" opacity=".5"/>
+        <line x1="313" y1="92" x2="313" y2="130" stroke="#4a9eff" stroke-width=".8" stroke-dasharray="3 3" opacity=".5"/>
+        <line x1="401" y1="92" x2="401" y2="130" stroke="#f5a623" stroke-width="1.5" stroke-dasharray="3 3" opacity=".7"/>
+        <line x1="489" y1="92" x2="489" y2="130" stroke="#facc15" stroke-width=".8" stroke-dasharray="3 3" opacity=".5"/>
+        <line x1="577" y1="92" x2="577" y2="130" stroke="#e05c2f" stroke-width=".8" stroke-dasharray="3 3" opacity=".5"/>
+        <line x1="668" y1="92" x2="668" y2="130" stroke="#4ade80" stroke-width=".8" stroke-dasharray="3 3" opacity=".5"/>
+      </svg>
+    </div>
+  </div>
+  <footer class="footer">Apostila Visual — Sonorização ao Vivo para Igrejas · Material de estudo</footer>
+</div>
+
+<script>
+// ═══════════════════ NAVEGAÇÃO SPA ═══════════════════════════════════════════
+const PAGES = ['home','intro','corrente','cabos','conectores','microfones','processamento','mesa','teoria','equalizador','dinamica','amplificador','projecao','acustica','operacao'];
+let currentPage = 'home';
+let chartsInited = {};
+let chartsAttempts = {}; // retry counters for chart initialization
+
+function goPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach((b,i) => b.classList.toggle('active', PAGES[i] === id));
+  const pg = document.getElementById('page-' + id);
+  if(pg) { pg.classList.add('active'); window.scrollTo(0,0); }
+  currentPage = id;
+  setTimeout(() => initChartsForPage(id), 80);
+}
+
+// ═══════════════════ CHARTS ══════════════════════════════════════════════════
+const C = (id, type, data, opts) => {
+  const el = document.getElementById(id);
+  if(!el || chartsInited[id]) return;
+
+  // retry if Chart.js not yet loaded
+  if(typeof Chart === 'undefined'){
+    chartsAttempts[id] = (chartsAttempts[id]||0) + 1;
+    if(chartsAttempts[id] > 10){
+      // draw a simple placeholder so the UI isn't empty
+      try{ const ctx = el.getContext && el.getContext('2d'); if(ctx){ ctx.clearRect(0,0,el.width||el.offsetWidth,el.height||el.offsetHeight); ctx.fillStyle='rgba(255,255,255,.04)'; ctx.font='12px "DM Sans",sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('Gráfico indisponível (Chart.js não carregado)', (el.width||el.offsetWidth)/2, (el.height||el.offsetHeight)/2); }}catch(e){}
+      return;
+    }
+    // try again shortly
+    setTimeout(()=>C(id,type,data,opts),200);
+    return;
+  }
+
+  // if element has zero size (hidden), delay until visible
+  const rect = el.getBoundingClientRect();
+  if(rect.width === 0 || rect.height === 0){
+    chartsAttempts[id] = (chartsAttempts[id]||0) + 1;
+    if(chartsAttempts[id] > 10){
+      // give up gracefully
+      return;
+    }
+    setTimeout(()=>C(id,type,data,opts),120);
+    return;
+  }
+
+  // If Chart.js is not available, draw a simple fallback visualization
+  if(typeof Chart === 'undefined'){
+    try{ fallbackDraw(el,type,data,opts); chartsInited[id]=true; }catch(e){ console.error('fallback failed',e); }
+    return;
+  }
+
+  // Try to create the chart; only mark as inited after success so failures can retry
+  try{
+    new Chart(el, { type, data, options: { responsive:true, maintainAspectRatio:false, ...opts } });
+    chartsInited[id] = true;
+  }catch(err){
+    console.error('Falha ao criar gráfico', id, err);
+    chartsAttempts[id] = (chartsAttempts[id]||0) + 1;
+    if(chartsAttempts[id] <= 10) setTimeout(()=>C(id,type,data,opts),200);
+    else {
+      // final fallback if Chart repeatedly fails
+      try{ fallbackDraw(el,type,data,opts); chartsInited[id]=true; }catch(e){console.error(e)}
+    }
+  }
+};
+
+// Simple fallback drawer for environments where Chart.js cannot be loaded.
+function fallbackDraw(canvasEl, type, data, opts){
+  // ensure canvas context
+  const ctx = canvasEl.getContext && canvasEl.getContext('2d');
+  if(!ctx) return;
+  // size the canvas to its displayed size
+  canvasEl.width = canvasEl.offsetWidth * (devicePixelRatio||1);
+  canvasEl.height = canvasEl.offsetHeight * (devicePixelRatio||1);
+  ctx.save();
+  ctx.scale(devicePixelRatio||1, devicePixelRatio||1);
+  const W = canvasEl.offsetWidth, H = canvasEl.offsetHeight;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = 'rgba(255,255,255,0.03)';
+  ctx.fillRect(0,0,W,H);
+  ctx.fillStyle = '#8891a8';
+  ctx.font = '12px DM Sans, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  // draw simple bars for bar charts
+  if(type === 'bar' && data && data.datasets && data.datasets[0] && Array.isArray(data.datasets[0].data)){
+    const vals = data.datasets[0].data.slice();
+    const max = Math.max(...vals.map(v=>Math.abs(v)||0), 1);
+    const pad = 20; const barW = (W - pad*2) / vals.length * 0.7;
+    vals.forEach((v,i)=>{
+      const h = (Math.abs(v)/max) * (H - 40);
+      const x = pad + i * ((W - pad*2)/vals.length) + ((W - pad*2)/vals.length - barW)/2;
+      const y = H - 20 - h;
+      ctx.fillStyle = (data.datasets[0].backgroundColor && data.datasets[0].backgroundColor[i]) || '#f5a62355';
+      ctx.fillRect(x, y, barW, h);
+    });
+    ctx.fillStyle='#8891a8';
+    ctx.fillText((data.label||'Gráfico') , W/2, 12);
+  }else{
+    // generic placeholder
+    ctx.fillText('Gráfico (fallback) — ' + (type||''), W/2, H/2);
+  }
+  ctx.restore();
+}
+
+const gridColor = 'rgba(255,255,255,.05)';
+const tickColor = '#8891a8';
+const scalesXY = (yLabel='', cb=null) => ({
+  y: { ticks:{ color:tickColor, callback:cb||undefined }, grid:{ color:gridColor }, title: yLabel ? {display:true,text:yLabel,color:tickColor,font:{size:10}} : undefined },
+  x: { ticks:{ color:tickColor, font:{size:10} }, grid:{ display:false } }
+});
+
+// Tenta garantir que Chart.js esteja disponível. Se não estiver, carrega dinamicamente do CDN.
+function ensureChartJs(timeout = 4000){
+  return new Promise((resolve) =>{
+    if(window.Chart) return resolve();
+    // se já iniciou carregamento, aguarda
+    const existing = document.querySelector('script[data-chartjs-dyn]');
+    if(existing){
+      existing.addEventListener('load', ()=>resolve());
+      existing.addEventListener('error', ()=>resolve());
+      // fallback timeout
+      setTimeout(()=>resolve(), timeout);
+      return;
+    }
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js';
+    s.async = true;
+    s.setAttribute('data-chartjs-dyn','1');
+    s.onload = ()=>resolve();
+    s.onerror = ()=>{ console.warn('Falha ao carregar Chart.js dinamicamente'); resolve(); };
+    document.head.appendChild(s);
+    // segurança: resolve após timeout mesmo se onload não disparar
+    setTimeout(()=>resolve(), timeout);
+  });
+}
+
+function initChartsForPage(id) {
+  // assegura que Chart.js esteja carregado antes de tentar criar gráficos
+  ensureChartJs().then(()=>{
+    // small delay to allow script to initialize
+    setTimeout(()=>_initChartsForPage(id),60);
+  });
+}
+
+function _initChartsForPage(id){
+  if(id === 'home') {
+    C('h-cabos','bar',{
+      labels:['Microfone','Instrumento','Saída de linha','Amplificador'],
+      datasets:[{label:'Nível (mV)',data:[2,150,1000,25000],backgroundColor:['rgba(45,212,191,.5)','rgba(74,158,255,.5)','rgba(167,139,250,.5)','rgba(224,92,47,.5)'],borderColor:['#2dd4bf','#4a9eff','#a78bfa','#e05c2f'],borderWidth:1}]
+    },{ scales:{ y:{type:'logarithmic',ticks:{color:tickColor,callback:v=>v+'mV'},grid:{color:gridColor}}, x:{ticks:{color:tickColor,font:{size:10}},grid:{display:false}} }, plugins:{legend:{display:false}} });
+
+    C('h-evol','bar',{
+      labels:['Cx. Amplificada','Cabeçote','Mesa+Amp','Sistema completo'],
+      datasets:[
+        {label:'Qualidade potencial',data:[40,60,80,98],backgroundColor:'rgba(245,166,35,.5)',borderColor:'#f5a623',borderWidth:1},
+        {label:'Facilidade de uso',data:[95,70,55,35],backgroundColor:'rgba(45,212,191,.4)',borderColor:'#2dd4bf',borderWidth:1},
+      ]
+    },{ scales:{ y:{max:100,ticks:{color:tickColor,callback:v=>v+'%'},grid:{color:gridColor}}, x:{ticks:{color:tickColor,font:{size:10}},grid:{display:false}} }, plugins:{legend:{labels:{color:tickColor,font:{size:11},boxWidth:12}}} });
+
+    C('h-spec','bar',{
+      labels:['Sub-grave\n20–80Hz','Grave\n80–300Hz','Médio\n300Hz–2kHz','Méd-agudo\n2–8kHz','Agudo\n8–20kHz'],
+      datasets:[{label:'Qtd instrumentos/vozes',data:[3,7,14,10,6],backgroundColor:['rgba(224,92,47,.6)','rgba(245,166,35,.6)','rgba(74,222,128,.6)','rgba(74,158,255,.6)','rgba(167,139,250,.6)'],borderWidth:0}]
+    },{ scales:{ y:{ticks:{color:tickColor},grid:{color:gridColor}}, x:{ticks:{color:tickColor,font:{size:10}},grid:{display:false}} }, plugins:{legend:{display:false}} });
+
+    C('h-amp','bar',{
+      labels:['20 pessoas','80 pessoas','300 pessoas','1000 pessoas'],
+      datasets:[{label:'Potência RMS orientativa',data:[100,400,1200,4000],backgroundColor:['rgba(74,222,128,.5)','rgba(74,158,255,.5)','rgba(245,166,35,.5)','rgba(224,92,47,.5)'],borderWidth:0}]
+    },{ scales:{ y:{ticks:{color:tickColor,callback:v=>v+'W'},grid:{color:gridColor}}, x:{ticks:{color:tickColor,font:{size:10}},grid:{display:false}} }, plugins:{legend:{display:false}} });
+
+    C('h-rt60','bar',{
+      labels:['Home studio','Sala de aula','Pregação','Igreja mix','Teatro','Igreja coral','Concerto'],
+      datasets:[
+        {label:'RT60 mínimo',data:[0.2,0.4,0.4,0.8,0.8,1.5,1.8],backgroundColor:'rgba(45,212,191,.4)',borderColor:'#2dd4bf',borderWidth:1},
+        {label:'RT60 máximo',data:[0.3,0.6,0.8,1.2,1.4,2.2,2.8],backgroundColor:'rgba(74,158,255,.4)',borderColor:'#4a9eff',borderWidth:1},
+      ]
+    },{ scales:{ y:{ticks:{color:tickColor,callback:v=>v+'s'},grid:{color:gridColor}}, x:{ticks:{color:tickColor,font:{size:10}},grid:{display:false}} }, plugins:{legend:{labels:{color:tickColor,font:{size:11},boxWidth:12}}} });
+  }
+
+  if(id === 'intro') {
+    C('i-grupos','radar',{
+      labels:['Conhecimento técnico','Relacionamento','Tempo de ensaio','Conhece os outros','Adaptação rápida'],
+      datasets:[
+        {label:'Músico',data:[80,70,85,60,70],borderColor:'#2dd4bf',backgroundColor:'rgba(45,212,191,.15)',borderWidth:2,pointBackgroundColor:'#2dd4bf'},
+        {label:'Cantor',data:[60,80,80,75,65],borderColor:'#a78bfa',backgroundColor:'rgba(167,139,250,.15)',borderWidth:2,pointBackgroundColor:'#a78bfa'},
+        {label:'Técnico de som',data:[90,65,90,85,80],borderColor:'#f5a623',backgroundColor:'rgba(245,166,35,.15)',borderWidth:2,pointBackgroundColor:'#f5a623'},
+      ]
+    },{ scales:{ r:{ ticks:{display:false}, grid:{color:'rgba(255,255,255,.1)'}, pointLabels:{color:tickColor,font:{size:11}} } }, plugins:{legend:{labels:{color:tickColor,font:{size:11},boxWidth:12}}} });
+  }
+
+  if(id === 'cabos') {
+    C('c-cabos','bar',{
+      labels:['Microfone','Instrumento','Saída de linha','Amplificador'],
+      datasets:[{label:'Nível (mV)',data:[2,150,1000,25000],backgroundColor:['rgba(45,212,191,.5)','rgba(74,158,255,.5)','rgba(167,139,250,.5)','rgba(224,92,47,.5)'],borderColor:['#2dd4bf','#4a9eff','#a78bfa','#e05c2f'],borderWidth:1}]
+    },{ scales:{ y:{type:'logarithmic',ticks:{color:tickColor,callback:v=>v+'mV'},grid:{color:gridColor}}, x:{ticks:{color:tickColor,font:{size:10}},grid:{display:false}} }, plugins:{legend:{display:false}} });
+  }
+
+  if(id === 'microfones') {
+    const fl=['63','125','250','500','1k','2k','4k','8k','16k'];
+    C('c-mics','line',{
+      labels:fl,
+      datasets:[
+        {label:'SM58 (mão)',data:[4,4,3,2,1,2,4,2,-2],borderColor:'#f5a623',backgroundColor:'rgba(245,166,35,.08)',tension:.4,borderWidth:2,pointRadius:3},
+        {label:'Lapela (plana)',data:[0,0,0,0,0,0,0,0,0],borderColor:'#2dd4bf',backgroundColor:'rgba(45,212,191,.08)',tension:.4,borderWidth:2,borderDash:[6,3],pointRadius:3},
+        {label:'Gooseneck',data:[-12,-8,-4,-1,0,0,1,0,-2],borderColor:'#a78bfa',backgroundColor:'rgba(167,139,250,.08)',tension:.4,borderWidth:2,pointRadius:3},
+        {label:'Condensador',data:[1,1,1,0,0,1,3,4,3],borderColor:'#4a9eff',backgroundColor:'rgba(74,158,255,.08)',tension:.4,borderWidth:2,borderDash:[3,2],pointRadius:3},
+      ]
+    },{ scales:{ y:{min:-15,max:8,ticks:{color:tickColor,callback:v=>v+'dB'},grid:{color:gridColor}}, x:{ticks:{color:tickColor,font:{size:10}},grid:{color:'rgba(255,255,255,.04)'}} }, plugins:{legend:{labels:{color:tickColor,font:{size:11},boxWidth:12}}} });
+  }
+
+  if(id === 'processamento') {
+    C('c-evol','bar',{
+      labels:['Caixa Amplif.','Cabeçote','Mesa+Amp','Sistema completo'],
+      datasets:[
+        {label:'Qualidade potencial',data:[40,60,80,98],backgroundColor:'rgba(245,166,35,.5)',borderColor:'#f5a623',borderWidth:1},
+        {label:'Facilidade de uso',data:[95,70,55,35],backgroundColor:'rgba(45,212,191,.4)',borderColor:'#2dd4bf',borderWidth:1},
+        {label:'Flexibilidade',data:[20,50,75,95],backgroundColor:'rgba(167,139,250,.4)',borderColor:'#a78bfa',borderWidth:1},
+      ]
+    },{ scales:{ y:{max:100,ticks:{color:tickColor,callback:v=>v+'%'},grid:{color:gridColor}}, x:{ticks:{color:tickColor,font:{size:10}},grid:{display:false}} }, plugins:{legend:{labels:{color:tickColor,font:{size:11},boxWidth:12}}} });
+  }
+
+  if(id === 'mesa') {
+    C('c-mesa','radar',{
+      labels:['Entradas balanceadas','Ganho/TRIM','EQ avançado','Phantom Power','Low Cut','PFL/Solo','Direct Out','Proteções'],
+      datasets:[
+        {label:'MXS (amador)',data:[20,10,40,0,0,0,0,30],borderColor:'#8891a8',backgroundColor:'rgba(136,145,168,.1)',borderWidth:1.5,pointBackgroundColor:'#8891a8'},
+        {label:'AMBW (semiprofissional)',data:[80,70,75,80,0,80,0,70],borderColor:'#f5a623',backgroundColor:'rgba(245,166,35,.1)',borderWidth:1.5,pointBackgroundColor:'#f5a623'},
+        {label:'CSM (profissional)',data:[100,100,100,100,100,100,100,100],borderColor:'#2dd4bf',backgroundColor:'rgba(45,212,191,.1)',borderWidth:2,pointBackgroundColor:'#2dd4bf'},
+      ]
+    },{ scales:{ r:{ ticks:{display:false,stepSize:25}, grid:{color:'rgba(255,255,255,.1)'}, pointLabels:{color:tickColor,font:{size:10}} } }, plugins:{legend:{labels:{color:tickColor,font:{size:11},boxWidth:12}}} });
+  }
+
+  if(id === 'teoria') {
+    C('c-tessitura','bar',{
+      labels:['Sub-grave\n20–80Hz','Grave\n80–300Hz','Médio-grave\n300–1kHz','Médio\n1–4kHz','Méd-agudo\n4–8kHz','Agudo\n8–20kHz'],
+      datasets:[
+        {label:'Bumbo / Subwoofer',data:[10,8,2,0,0,0],backgroundColor:'rgba(224,92,47,.6)',borderWidth:0},
+        {label:'Contrabaixo',data:[3,10,7,2,0,0],backgroundColor:'rgba(245,166,35,.6)',borderWidth:0},
+        {label:'Voz masculina',data:[0,7,10,8,4,1],backgroundColor:'rgba(74,158,255,.6)',borderWidth:0},
+        {label:'Voz feminina',data:[0,2,8,10,7,3],backgroundColor:'rgba(244,114,182,.6)',borderWidth:0},
+        {label:'Guitarra / Violão',data:[0,4,8,10,8,4],backgroundColor:'rgba(74,222,128,.5)',borderWidth:0},
+        {label:'Pratos / Hi-hat',data:[0,0,1,3,8,10],backgroundColor:'rgba(167,139,250,.6)',borderWidth:0},
+      ]
+    },{ scales:{ x:{stacked:true,ticks:{color:tickColor,font:{size:10}},grid:{display:false}}, y:{stacked:true,ticks:{color:tickColor},grid:{color:gridColor}} }, plugins:{legend:{labels:{color:tickColor,font:{size:10},boxWidth:10}}} });
+  }
+
+  if(id === 'dinamica') {
+    const inp = Array.from({length:30},(_,i)=>-50+i*2);
+    const thr=-20,rat=4;
+    C('c-comp','line',{
+      labels:inp.map(v=>v+'dB'),
+      datasets:[
+        {label:'Sem compressão (1:1)',data:inp.map(v=>v),borderColor:'#8891a8',tension:0,borderWidth:1.5,pointRadius:0,borderDash:[4,3]},
+        {label:'Com compressão (4:1, thr −20dB)',data:inp.map(v=>v<=thr?v:thr+(v-thr)/rat),borderColor:'#f5a623',tension:0,borderWidth:2.5,pointRadius:0},
+      ]
+    },{ scales:{ y:{min:-50,max:0,ticks:{color:tickColor,callback:v=>v+'dB',maxTicksLimit:7},grid:{color:gridColor},title:{display:true,text:'Saída (dB)',color:tickColor,font:{size:10}}}, x:{ticks:{color:tickColor,font:{size:10},maxTicksLimit:8},grid:{color:'rgba(255,255,255,.04)'},title:{display:true,text:'Entrada (dB)',color:tickColor,font:{size:10}}} }, plugins:{legend:{labels:{color:tickColor,font:{size:11},boxWidth:12}}} });
+  }
+
+  if(id === 'amplificador') {
+    C('c-amp','bar',{
+      labels:['~20 pessoas','~80 pessoas','~300 pessoas','~1000 pessoas'],
+      datasets:[{label:'Potência RMS orientativa',data:[100,400,1200,4000],backgroundColor:['rgba(74,222,128,.5)','rgba(74,158,255,.5)','rgba(245,166,35,.5)','rgba(224,92,47,.5)'],borderWidth:0}]
+    },{ scales:{ y:{ticks:{color:tickColor,callback:v=>v+'W'},grid:{color:gridColor}}, x:{ticks:{color:tickColor,font:{size:10}},grid:{display:false}} }, plugins:{legend:{display:false}} });
+  }
+
+  if(id === 'projecao') {
+    C('c-imp','bar',{
+      labels:['1 caixa 8Ω','2 caixas 8Ω série','2 caixas 8Ω paralelo','4 caixas 8Ω paralelo','2 caixas 4Ω paralelo'],
+      datasets:[{label:'Impedância resultante',data:[8,16,4,2,2],backgroundColor:['rgba(74,158,255,.5)','rgba(167,139,250,.5)','rgba(245,166,35,.5)','rgba(248,113,113,.6)','rgba(248,113,113,.6)'],borderWidth:0}]
+    },{ scales:{ y:{ticks:{color:tickColor,callback:v=>v+'Ω'},grid:{color:gridColor}}, x:{ticks:{color:tickColor,font:{size:10}},grid:{display:false}} }, plugins:{legend:{display:false}} });
+  }
+
+  if(id === 'acustica') {
+    C('c-rt60','bar',{
+      labels:['Home studio','Sala de aula','Pregação','Igreja mix','Teatro','Igreja coral','Concerto'],
+      datasets:[
+        {label:'RT60 mínimo',data:[0.2,0.4,0.4,0.8,0.8,1.5,1.8],backgroundColor:'rgba(45,212,191,.4)',borderColor:'#2dd4bf',borderWidth:1},
+        {label:'RT60 máximo',data:[0.3,0.6,0.8,1.2,1.4,2.2,2.8],backgroundColor:'rgba(74,158,255,.4)',borderColor:'#4a9eff',borderWidth:1},
+      ]
+    },{ scales:{ y:{ticks:{color:tickColor,callback:v=>v+'s'},grid:{color:gridColor}}, x:{ticks:{color:tickColor,font:{size:10}},grid:{display:false}} }, plugins:{legend:{labels:{color:tickColor,font:{size:11},boxWidth:12}}} });
+  }
+}
+
+// ═══════════════════ EQ INTERATIVO ══════════════════════════════════════════
+const EQ_BANDS=[31,63,125,250,500,1000,2000,4000,8000,16000];
+const EQ_LABELS=['31','63','125','250','500','1k','2k','4k','8k','16k'];
+const EQ_COLORS=['#e05c2f','#f5a623','#facc15','#84cc16','#4ade80','#2dd4bf','#4a9eff','#818cf8','#a78bfa','#f472b6'];
+let eqValues=[0,0,0,0,0,0,0,0,0,0];
+const presets={
+  flat:{vals:[0,0,0,0,0,0,0,0,0,0],desc:'Resposta plana — ponto de partida neutro.'},
+  voz:{vals:[-6,-4,-3,-2,0,1,3,2,1,-1],desc:'Corte de sub-graves para limpar o canal. Ênfase em 4kHz para clareza das consoantes do pregador.'},
+  louvor:{vals:[-2,2,1,0,-1,0,1,2,1,0],desc:'Leve reforço de graves para corpo musical, suave brilho nos agudos para presença do vocal.'},
+  feedback:{vals:[-8,-6,-3,-2,-4,-3,-2,-5,-4,-3],desc:'Corte generalizado das frequências mais propensas a realimentação. Use o EQ gráfico na saída principal.'},
+  acustica:{vals:[-8,-6,-5,-4,-3,-2,-1,0,1,1],desc:'Cortar graves e médios-graves reduz o "embolado" causado pela reverberação do templo.'},
+  baixo:{vals:[3,6,4,2,0,-1,-2,-3,-2,-1],desc:'Destaque para kick e contrabaixo. Use com cuidado — excesso gera distorção e cansa o ouvido.'},
+};
+
+function buildEqSliders(){
+  const c=document.getElementById('eqSliders');
+  if(!c) return;
+  c.innerHTML='';
+  EQ_BANDS.forEach((freq,i)=>{
+    const d=document.createElement('div');
+    d.className='eq-band';
+    d.innerHTML=`<div class="val-label" id="eq-val-${i}">${eqValues[i]>0?'+':''}${eqValues[i]}dB</div><div class="eq-slider-wrap"><input type="range" id="eq-${i}" min="-12" max="12" value="${eqValues[i]}" step="1" style="--thumb-color:${EQ_COLORS[i]}" oninput="updateEq(${i},this.value)"></div><div class="freq-label">${EQ_LABELS[i]}<br>Hz</div>`;
+    c.appendChild(d);
+  });
+}
+
+function updateEq(idx,val){
+  eqValues[idx]=parseInt(val);
+  document.getElementById(`eq-val-${idx}`).textContent=(val>0?'+':'')+val+'dB';
+  drawEqCurve();
+  document.querySelectorAll('.eq-pbtn').forEach(b=>b.classList.remove('active'));
+}
+
+function applyPreset(name,btn){
+  const p=presets[name];
+  eqValues=[...p.vals];
+  buildEqSliders();
+  drawEqCurve();
+  document.querySelectorAll('.eq-pbtn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  const d=document.getElementById('eqDesc');
+  if(d) d.textContent=p.desc;
+}
+
+function drawEqCurve(){
+  const canvas=document.getElementById('eqCanvas');
+  if(!canvas) return;
+  canvas.width=canvas.offsetWidth*devicePixelRatio;
+  canvas.height=canvas.offsetHeight*devicePixelRatio;
+  const ctx=canvas.getContext('2d');
+  ctx.scale(devicePixelRatio,devicePixelRatio);
+  const W=canvas.offsetWidth,H=canvas.offsetHeight;
+  ctx.clearRect(0,0,W,H);
+  // grid
+  ctx.strokeStyle='rgba(255,255,255,.06)';ctx.lineWidth=1;
+  for(let db=-12;db<=12;db+=3){
+    const y=H/2-db*(H/2/12);
+    ctx.beginPath();ctx.moveTo(36,y);ctx.lineTo(W-8,y);ctx.stroke();
+    if(db!==0){ctx.fillStyle='rgba(255,255,255,.2)';ctx.font='9px JetBrains Mono,monospace';ctx.fillText((db>0?'+':'')+db,2,y+3);}
+  }
+  ctx.strokeStyle='rgba(255,255,255,.15)';ctx.setLineDash([4,4]);
+  ctx.beginPath();ctx.moveTo(36,H/2);ctx.lineTo(W-8,H/2);ctx.stroke();ctx.setLineDash([]);
+  // freq labels
+  EQ_LABELS.forEach((l,i)=>{const x=36+i*(W-44)/9;ctx.fillStyle='rgba(255,255,255,.2)';ctx.font='9px JetBrains Mono,monospace';ctx.textAlign='center';ctx.fillText(l,x,H-2);});
+  // curve
+  const pts=eqValues.map((v,i)=>({x:36+i*(W-44)/9,y:H/2-v*(H/2/12)}));
+  const grad=ctx.createLinearGradient(0,0,W,0);
+  EQ_COLORS.forEach((c,i)=>grad.addColorStop(i/9,c+'88'));
+  ctx.beginPath();ctx.moveTo(pts[0].x,H/2);pts.forEach(p=>ctx.lineTo(p.x,p.y));ctx.lineTo(pts[9].x,H/2);ctx.closePath();ctx.fillStyle=grad;ctx.fill();
+  ctx.beginPath();ctx.moveTo(pts[0].x,pts[0].y);
+  for(let i=1;i<pts.length;i++){const px=(pts[i-1].x+pts[i].x)/2,py=(pts[i-1].y+pts[i].y)/2;ctx.quadraticCurveTo(pts[i-1].x,pts[i-1].y,px,py);}
+  ctx.lineTo(pts[9].x,pts[9].y);
+  const lg=ctx.createLinearGradient(0,0,W,0);EQ_COLORS.forEach((c,i)=>lg.addColorStop(i/9,c));
+  ctx.strokeStyle=lg;ctx.lineWidth=2.5;ctx.stroke();
+  pts.forEach((p,i)=>{ctx.beginPath();ctx.arc(p.x,p.y,4,0,Math.PI*2);ctx.fillStyle=EQ_COLORS[i];ctx.fill();});
+}
+
+// ═══════════════════ POLAR ══════════════════════════════════════════════════
+const polarData={
+  cardioide:{fn:a=>Math.max(0,0.5+0.5*Math.cos(a)),color:'#f5a623',info:'<strong style="color:#f5a623">Cardioide</strong> — capta principalmente pela frente (0°), rejeita trás (180°). O mais comum: microfones de mão, headsets, goosenecks.<br><br><strong>Use quando</strong> há monitores atrás. A rejeição traseira reduz feedback.<br><br>Sons laterais a 90° ainda são captados (~70%).'},
+  supercardioide:{fn:a=>Math.max(0,0.37+0.63*Math.cos(a)),color:'#2dd4bf',info:'<strong style="color:#2dd4bf">Supercardioide</strong> — captação frontal ainda mais estreita. Pequeno lóbulo traseiro (~126°).<br><br><strong>Use quando</strong> o ambiente tem muito ruído lateral. Monitores devem ficar a 126°, não a 180°.'},
+  omnidirecional:{fn:()=>1,color:'#4a9eff',info:'<strong style="color:#4a9eff">Omnidirecional</strong> — capta igualmente em todos os ângulos (360°). Sem efeito de proximidade. Resposta mais plana.<br><br><strong>Use quando</strong> captar grupo (coral), ou lapela em movimento (não afetado pela posição da cabeça).'},
+  bidirecional:{fn:a=>Math.abs(Math.cos(a)),color:'#a78bfa',info:'<strong style="color:#a78bfa">Bidirecional (Fig-8)</strong> — capta frente e trás. Rejeita totalmente os lados (90°/270°).<br><br>Para entrevistas ou técnica M/S. <strong>Raramente usado ao vivo</strong> — lóbulo traseiro capta caixas.'},
+};
+let currentPolarType='cardioide';
+
+function drawPolar(type,btn){
+  currentPolarType=type;
+  document.querySelectorAll('.polar-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  const infoEl=document.getElementById('polarInfo');
+  if(infoEl) infoEl.innerHTML=polarData[type].info;
+  const canvas=document.getElementById('polarCanvas');
+  if(!canvas) return;
+  const wrap=canvas.parentElement;
+  const size=Math.min(wrap.offsetWidth||260,260);
+  canvas.width=size*devicePixelRatio;canvas.height=size*devicePixelRatio;
+  canvas.style.width=size+'px';canvas.style.height=size+'px';
+  const ctx=canvas.getContext('2d');ctx.scale(devicePixelRatio,devicePixelRatio);
+  const cx=size/2,cy=size/2,R=size*0.38;
+  ctx.clearRect(0,0,size,size);
+  [0.25,0.5,0.75,1].forEach(r=>{ctx.beginPath();ctx.arc(cx,cy,R*r,0,Math.PI*2);ctx.strokeStyle='rgba(255,255,255,.08)';ctx.lineWidth=1;ctx.stroke();});
+  for(let a=0;a<Math.PI*2;a+=Math.PI/6){ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+R*Math.cos(a),cy+R*Math.sin(a));ctx.strokeStyle='rgba(255,255,255,.05)';ctx.stroke();}
+  ['0°','30°','60°','90°','120°','150°','180°','-150°','-120°','-90°','-60°','-30°'].forEach((l,i)=>{const a=(i/12)*Math.PI*2-Math.PI/2;ctx.fillStyle='rgba(255,255,255,.25)';ctx.font=`${Math.max(8,size*0.033)}px DM Sans,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(l,cx+(R+12)*Math.cos(a),cy+(R+12)*Math.sin(a));});
+  const fn=polarData[type].fn;const color=polarData[type].color;
+  ctx.beginPath();
+  for(let i=0;i<=360;i++){const a=(i/360)*Math.PI*2-Math.PI/2;const r=fn(a-(-Math.PI/2))*R;const x=cx+r*Math.cos(a),y=cy+r*Math.sin(a);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}
+  ctx.closePath();ctx.fillStyle=color+'25';ctx.fill();ctx.strokeStyle=color;ctx.lineWidth=2;ctx.stroke();
+  ctx.beginPath();ctx.arc(cx,cy,4,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();
+}
+
+// ═══════════════════ INIT ══════════════════════════════════════════════════
+// Defer initial page selection to the hash-aware initializer below (after goPage is defined)
+window.addEventListener('resize',()=>{
+  if(currentPage==='equalizador') drawEqCurve();
+  if(currentPage==='microfones') drawPolar(currentPolarType,document.querySelector('.polar-btn.active'));
+});
+
+// EQ init ao entrar na página
+// guardamos a implementação original de goPage (declarada acima) e substituímos
+// a referência global por um wrapper que atualiza a hash e delega para a impl.
+const origGoPage = goPage;
+window.goPage = function(id){
+  // Atualiza a hash na URL (sem disparar hashchange) para permitir deep-linking e histórico
+  if(location.hash !== '#'+id) history.pushState(null, '', '#'+id);
+  origGoPage(id);
+  if(id==='equalizador'){
+    buildEqSliders();
+    setTimeout(drawEqCurve,120);
+  }
+  if(id==='microfones'){
+    setTimeout(()=>drawPolar(currentPolarType,document.querySelector('.polar-btn.active')),120);
+  }
+};
+
+// Inicializa a SPA respeitando a hash na URL (deep-linking)
+(function(){
+  const hash = (location.hash||'').replace('#','');
+  const start = (hash && PAGES.includes(hash)) ? hash : 'home';
+  // garante que a URL mostre a hash correta sem empurrar entrada duplicada no histórico
+  if(location.hash !== '#'+start) history.replaceState(null,'', '#'+start);
+  // chamar a função global goPage (agora atribuída em window.goPage)
+  window.goPage(start);
+  // Permite navegar com botões voltar/avançar do navegador
+  window.addEventListener('hashchange', ()=>{ const id=location.hash.replace('#',''); if(PAGES.includes(id)) window.goPage(id); });
+})();
+
+// Programmatic click listeners: some environments strip inline onclick on SVG/group elements.
+// Attach safe listeners to topic cards and SVG elos to ensure goPage fires.
+(function attachProgrammaticListeners(){
+  try{
+    // topic cards
+    document.querySelectorAll('.topic-card').forEach(tc=>{
+      tc.addEventListener('click', e=>{
+        const onclick = tc.getAttribute('onclick');
+        if(onclick){
+          // extract id from string like goPage('intro')
+          const m = onclick.match(/goPage\(['"]([a-z0-9-]+)['"]\)/i);
+          if(m) window.goPage(m[1]);
+        } else if(tc.dataset.target){
+          window.goPage(tc.dataset.target);
+        }
+      });
+    });
+
+    // svg groups inside mm-wrap (elos)
+    document.querySelectorAll('.mm-wrap svg g').forEach(g=>{
+      g.addEventListener('click', e=>{
+        const onclick = g.getAttribute('onclick');
+        if(onclick){ const m = onclick.match(/goPage\(['"]([a-z0-9-]+)['"]\)/i); if(m) window.goPage(m[1]); }
+      });
+    });
+
+    // nav buttons (ensure .active toggling works when using keyboard/nav)
+    document.querySelectorAll('.nav-btn').forEach((b,i)=>{
+      b.addEventListener('click', ()=>{
+        const id = (PAGES[i]); if(id) window.goPage(id);
+      });
+    });
+  }catch(e){ console.error('Erro ao anexar listeners programáticos', e); }
+})();
+</script>
+</body>
+</html>
